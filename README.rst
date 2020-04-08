@@ -5,7 +5,7 @@ swagger2locustio
 
 swagger2locustio - a tool for testing API endpoints that have Open API / Swagger specifications using locustio tool.
 
-It generates `locustfile.py` from the application schema.
+It generates ``locustfile.py`` from the application schema.
 
 **Supported specification versions**:
 
@@ -31,13 +31,13 @@ Usage
 Contributing
 ------------
 
-Please, see the `CONTRIBUTING.rst` file for more details.
+Please, see the ``CONTRIBUTING.rst`` file for more details.
 
 License
 -------
 
-The code in this project is licensed under `MIT license`.
-By contributing to `swagger2locustio`, you agree that your contributions
+The code in this project is licensed under ``MIT license``.
+By contributing to ``swagger2locustio``, you agree that your contributions
 will be licensed under its MIT license.
 
 .. |Build| image:: https://github.com/vsvirsky/swagger2locustio
