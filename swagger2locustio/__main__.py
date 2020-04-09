@@ -2,8 +2,7 @@ import argparse
 from pathlib import Path
 
 from swagger2locustio.strategy.json_strategy import JsonStrategy
-
-API_OPERATIONS = ["get", "post", "put", "patch", "delete", "head", "options", "trace"]
+from swagger2locustio.settings import API_OPERATIONS
 
 
 def main():
