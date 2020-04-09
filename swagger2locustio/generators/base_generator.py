@@ -1,8 +1,11 @@
+import logging
 from itertools import combinations
 from copy import copy, deepcopy
-from typing import List, Tuple, Dict
+from typing import List, Dict
 
 from swagger2locustio.templates import locustfile_templates as l_templates
+
+log = logging.getLogger(__name__)
 
 
 class BaseGenerator:
@@ -26,7 +29,7 @@ class BaseGenerator:
                 try:
                     params_combinations = self.generate_params(params_data)
                 except ValueError as e:
-                    print(e)
+                    logging.info(e)
                     continue
                 for path_parameters in params_combinations["path_params"]:
                     for query_parameters in params_combinations["query_params"]:

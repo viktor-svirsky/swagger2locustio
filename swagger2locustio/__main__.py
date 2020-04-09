@@ -103,19 +103,17 @@ def main():
     }
     log.debug(f"Mask: {mask}")
 
-    swagger_strategy = None
     if ext == ".json":
         swagger_strategy = JsonStrategy(swagger_file, results_path, mask, args.strict)
     elif ext in (".yaml", ".yml"):
-        swagger_strategy = ellipsis
+        swagger_strategy = Ellipsis
     else:
-        log.error("Incorrect file format")
+        raise ValueError("Incorrect file format")
     log.debug(f"Strategy: {swagger_strategy}")
-    if swagger_strategy:
-        try:
-            swagger_strategy.process()
-        except ValueError as e:
-            logging.error(e)
+    try:
+        swagger_strategy.process()
+    except ValueError as e:
+        logging.error(e)
 
 
 if __name__ == "__main__":
