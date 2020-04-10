@@ -11,7 +11,7 @@ log = logging.getLogger(__name__)
 class BaseGenerator:
     def __init__(self, strict: bool):
         self.strict = strict
-        self.vars_without_values = set()
+        self.vars_without_values = {}
 
     def generate_code(self, swagger_data: dict) -> str:
         test_cases = self.generate_test_cases(swagger_data["paths"])
@@ -46,7 +46,7 @@ class BaseGenerator:
                                     for key, val in path_parameters.items():
                                         if val == Ellipsis:
                                             val = f"{key}_test_{test_count}"
-                                            self.vars_without_values.add(val)
+                                            self.vars_without_values[val] = ...
                                         else:
                                             val = repr(val)
                                         pair = l_templates.path_param_pair_template.render(key=key, val=val)
@@ -137,7 +137,7 @@ class BaseGenerator:
         return "".join(security_cases)
 
     def generate_code_from_template(self, test_cases: str, security_cases: str) -> str:
-        vars_str = "\n".join(f"{var} = " for var in self.vars_without_values)
+        vars_str = "\n".join(f"{var} = " for var in self.vars_without_values.keys())
         return l_templates.file_template.render(
             required_vars=vars_str,
             test_cases=test_cases,
