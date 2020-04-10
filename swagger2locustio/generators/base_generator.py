@@ -28,35 +28,23 @@ class BaseGenerator:
         for path, methods_data in paths_data.items():
             for method, method_data in methods_data.items():
                 params_data = method_data.get("params", {})
-                responses_data = method_data.get("responses", {})
+                # responses_data = method_data.get("responses", {})
                 case = 0
                 try:
                     params_combinations = self.generate_params(params_data)
                 except ValueError as e:
-                    logging.info(e)
+                    logging.warning(e)
                     continue
                 for path_parameters in params_combinations["path_params"]:
                     for query_parameters in params_combinations["query_params"]:
                         for header_parameters in params_combinations["header_params"]:
                             for cookie_parameters in params_combinations["cookie_params"]:
                                 func_name = f"test_{test_count}_case_{case}"
-                                path_parameters_str = ""
-                                if path_parameters:
-                                    parameters_pairs = []
-                                    for key, val in path_parameters.items():
-                                        if val == Ellipsis:
-                                            val = f"{key}_test_{test_count}"
-                                            self.vars_without_values[val] = ...
-                                        else:
-                                            val = repr(val)
-                                        pair = l_templates.path_param_pair_template.render(key=key, val=val)
-                                        parameters_pairs.append(pair)
-                                    path_parameters_str = ", " + ", ".join(parameters_pairs)
                                 func = l_templates.func_template.render(
                                     func_name=func_name,
                                     method=method,
                                     path=path,
-                                    path_params=path_parameters_str,
+                                    path_params=path_parameters,
                                     query_params=query_parameters,
                                     header_params=header_parameters,
                                     cookie_params=cookie_parameters
@@ -88,7 +76,7 @@ class BaseGenerator:
             elif param_location == "cookie":
                 target_params = cookie_params
             else:
-                raise ValueError(f"Not valid {param} `in` value: {param_location}")
+                raise ValueError(f"Not valid {param} `in` value: {param_location}", param_config)
 
             if not required and default_val is not None:
                 target_params["not_required"].append({param: default_val})
@@ -96,9 +84,21 @@ class BaseGenerator:
                 if default_val is not None:
                     target_params["required"].append({param: default_val})
                 elif not self.strict:
-                    target_params["required"].append({param: ...})
+                    target_params["required"].append({param: Ellipsis})
                 else:
                     raise ValueError(f"No default value found for required {param_location} param {param}")
+        # path_parameters_str = ""
+        # if path_parameters:
+        #     parameters_pairs = []
+        #     for key, val in path_parameters.items():
+        #         if val == Ellipsis:
+        #             val = f"{key}_test_{test_count}"
+        #             self.vars_without_values[val] = ...
+        #         else:
+        #             val = repr(val)
+        #         pair = l_templates.path_param_pair_template.render(key=key, val=val)
+        #         parameters_pairs.append(pair)
+        #     path_parameters_str = ", " + ", ".join(parameters_pairs)
         params_combinations = {
             "path_params": self.make_params_combinations(path_params),
             "query_params": self.make_params_combinations(query_params),

@@ -38,7 +38,7 @@ func_template = Template("""
             headers={{ header_params }},
             cookies={{ cookie_params }}
         )
-    
+
 """)
 
 
