@@ -11,10 +11,14 @@ log = logging.getLogger(__name__)
 class BaseGenerator:
     def __init__(self, strict: bool):
         self.strict = strict
+        self.vars_without_values = set()
 
     def generate_code(self, swagger_data: dict) -> str:
         test_cases = self.generate_test_cases(swagger_data["paths"])
-        security_cases = self.generate_security_cases(swagger_data["security"])
+        security_data = swagger_data["security"]
+        security_cases = None
+        if security_data:
+            security_cases = self.generate_security_cases(security_data)
         code = self.generate_code_from_template(test_cases, security_cases)
         return code
 
@@ -40,10 +44,16 @@ class BaseGenerator:
                                 if path_parameters:
                                     parameters_pairs = []
                                     for key, val in path_parameters.items():
-                                        parameters_pairs.append(f"{key}={val}")
+                                        if val == Ellipsis:
+                                            val = f"{key}_test_{test_count}"
+                                            self.vars_without_values.add(val)
+                                        else:
+                                            val = repr(val)
+                                        pair = l_templates.path_param_pair_template.render(key=key, val=val)
+                                        parameters_pairs.append(pair)
                                     path_parameters_str = ", ".join(parameters_pairs)
                                 path_par = f".format({path_parameters_str})"
-                                func = l_templates.func_template.format(
+                                func = l_templates.func_template.render(
                                     func_name=func_name,
                                     method=method,
                                     path=path,
@@ -87,7 +97,7 @@ class BaseGenerator:
                 if default_val is not None:
                     target_params["required"].append({param: default_val})
                 elif not self.strict:
-                    target_params["required"].append({param: "#####"})
+                    target_params["required"].append({param: ...})
                 else:
                     raise ValueError(f"No default value found for required {param_location} param {param}")
         params_combinations = {
@@ -121,10 +131,15 @@ class BaseGenerator:
                 location = security_config.get("in")
                 name = security_config.get("name")
                 if location.lower() == "header" and name:
-                    security_cases.append(l_templates.auth_key_header_template.format(name=name))
+                    security_cases.append(l_templates.auth_key_header_template.render(name=name))
                 else:
                     raise ValueError(security_config)
         return "".join(security_cases)
 
     def generate_code_from_template(self, test_cases: str, security_cases: str) -> str:
-        return l_templates.file_template.format(test_cases=test_cases, security_cases=security_cases)
+        vars_str = "\n".join(f"{var} = " for var in self.vars_without_values)
+        return l_templates.file_template.render(
+            required_vars=vars_str,
+            test_cases=test_cases,
+            security_cases=security_cases
+        )
