@@ -28,7 +28,9 @@ setup(
     packages=["swagger2locustio"],
     zip_safe=False,
     include_package_data=True,
-    install_requires=[],
+    install_requires=[
+        "Jinja2==2.11.1",
+    ],
     entry_points={
         "console_scripts": [
             "swagger2locustio=swagger2locustio.__main__:main",
