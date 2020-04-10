@@ -1,7 +1,7 @@
 import logging
 from itertools import combinations
-from copy import copy, deepcopy
-from typing import List, Dict
+from copy import deepcopy
+from typing import List, Dict, Union
 
 from swagger2locustio.templates import locustfile_templates as l_templates
 
@@ -9,11 +9,11 @@ log = logging.getLogger(__name__)
 
 
 class BaseGenerator:
-    def __init__(self, strict: bool):
-        self.strict = strict
+    def __init__(self, strict_level: int):
+        self.strict_level = strict_level
         self.vars_without_values = {}
 
-    def generate_code(self, swagger_data: dict) -> str:
+    def generate_locustfile(self, swagger_data: dict) -> str:
         test_cases = self.generate_test_cases(swagger_data["paths"])
         security_data = swagger_data["security"]
         security_cases = None
@@ -44,17 +44,52 @@ class BaseGenerator:
                                     func_name=func_name,
                                     method=method,
                                     path=path,
-                                    path_params=path_parameters,
-                                    query_params=query_parameters,
-                                    header_params=header_parameters,
-                                    cookie_params=cookie_parameters
+                                    path_params=self._format_params(path_parameters, test_count, "path"),
+                                    query_params=self._format_params(query_parameters, test_count, "query"),
+                                    header_params=self._format_params(header_parameters, test_count, "header"),
+                                    cookie_params=self._format_params(cookie_parameters, test_count, "cookie")
                                 )
                                 funcs.append(func)
                                 case += 1
                 test_count += 1
         return "".join(funcs)
 
-    def generate_params(self, params: dict) -> Dict[str, List[dict]]:
+    def generate_params(self, params: dict) -> Dict[str, List[List[dict]]]:
+        extracted_params = self._extract_params(params)
+        params_combinations = {
+            "path_params": self._create_params_combinations(extracted_params["path_params"]),
+            "query_params": self._create_params_combinations(extracted_params["query_params"]),
+            "header_params": self._create_params_combinations(extracted_params["header_params"]),
+            "cookie_params": self._create_params_combinations(extracted_params["cookie_params"]),
+        }
+        return params_combinations
+
+    def _format_params(self, raw_params: List[dict], test_count: int, param_type) -> Union[str, dict]:
+        params = []
+        for param in raw_params:
+            name = param.get("name")
+            val = param.get("default")
+            if not val:
+                val = f"{name}_test_{test_count}"
+                self.vars_without_values[val] = param
+            else:
+                val = repr(val)
+            if param_type == "path":
+                params.append(l_templates.path_param_pair_template.render(key=name, val=val))
+            else:
+                params.append(l_templates.dict_param_pair_template.render(key=name, val=val))
+        formatted_params = ""
+        if param_type == "path":
+            if params:
+                formatted_params = ", " + ", ".join(params)
+        else:
+            if not params:
+                formatted_params = "{}"
+            else:
+                formatted_params = "{" + ", ".join(params) + "}"
+        return formatted_params
+
+    def _extract_params(self, params: dict) -> Dict[str, Dict[str, list]]:
         path_params = {
             "required": [],
             "not_required": []
@@ -65,6 +100,7 @@ class BaseGenerator:
         for param, param_config in params.items():
             param_location = param_config.get("in")
             required = param_config.get("required")
+            required_type = "required" if required else "not_required"
             default_val = param_config.get("default")
             target_params = ...
             if param_location == "query":
@@ -78,48 +114,34 @@ class BaseGenerator:
             else:
                 raise ValueError(f"Not valid {param} `in` value: {param_location}", param_config)
 
-            if not required and default_val is not None:
-                target_params["not_required"].append({param: default_val})
-            elif required:
-                if default_val is not None:
-                    target_params["required"].append({param: default_val})
-                elif not self.strict:
-                    target_params["required"].append({param: Ellipsis})
+            if self.strict_level == 0:
+                target_params[required_type].append(param_config)
+            elif self.strict_level == 1:
+                if default_val or (not default_val and required):
+                    target_params[required_type].append(param_config)
+            elif self.strict_level == 2:
+                if default_val:
+                    target_params[required_type].append(param_config)
                 else:
                     raise ValueError(f"No default value found for required {param_location} param {param}")
-        # path_parameters_str = ""
-        # if path_parameters:
-        #     parameters_pairs = []
-        #     for key, val in path_parameters.items():
-        #         if val == Ellipsis:
-        #             val = f"{key}_test_{test_count}"
-        #             self.vars_without_values[val] = ...
-        #         else:
-        #             val = repr(val)
-        #         pair = l_templates.path_param_pair_template.render(key=key, val=val)
-        #         parameters_pairs.append(pair)
-        #     path_parameters_str = ", " + ", ".join(parameters_pairs)
-        params_combinations = {
-            "path_params": self.make_params_combinations(path_params),
-            "query_params": self.make_params_combinations(query_params),
-            "header_params": self.make_params_combinations(header_params),
-            "cookie_params": self.make_params_combinations(cookie_params),
+        params = {
+            "path_params": path_params,
+            "query_params": query_params,
+            "header_params": header_params,
+            "cookie_params": cookie_params,
         }
-        return params_combinations
+        return params
 
-    def make_params_combinations(self, params: dict) -> List[dict]:
+    def _create_params_combinations(self, params: Dict[str, list]) -> List[List[Dict]]:
         not_required_query_params = params["not_required"]
-        required_query_params = {}
-        params_list = []
-        for sub_dict in params["required"]:
-            required_query_params.update(sub_dict)
-        for param_count in range(len(not_required_query_params) + 1):
-            for params in combinations(not_required_query_params, param_count):
-                query_params = copy(required_query_params)
-                for sub_dict in params:
-                    query_params.update(sub_dict)
-                params_list.append(query_params)
-        return params_list
+        required_query_params = params["required"]
+        params_combinations = []
+        for combination_count in range(len(not_required_query_params) + 1):
+            for not_required_combination in combinations(not_required_query_params, combination_count):
+                combination = required_query_params.copy()
+                combination += list(not_required_combination)
+                params_combinations.append(combination)
+        return params_combinations
 
     def generate_security_cases(self, security_data: dict) -> str:
         security_cases = []
@@ -136,7 +158,10 @@ class BaseGenerator:
         return "".join(security_cases)
 
     def generate_code_from_template(self, test_cases: str, security_cases: str, host: str) -> str:
-        vars_str = "\n".join(f"{var} = \"#\"" for var in self.vars_without_values.keys())
+        required_vars = []
+        for var, var_data in self.vars_without_values.items():
+            required_vars.append(f"{var} = \"#\"  # {var_data}")
+        vars_str = "\n".join(required_vars)
         return l_templates.file_template.render(
             required_vars=vars_str,
             test_cases=test_cases,

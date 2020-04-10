@@ -25,7 +25,7 @@ class WebsiteUser(HttpLocust):
     wait_time = between(5.0, 9.0)
     {% if host %}
     host = "{{ host }}"
-    {% endif %}
+{% endif %}
 """)
 
 
@@ -55,3 +55,4 @@ auth_key_header_template = Template("""
 """)
 
 path_param_pair_template = Template("{{ key }}={{ val }}")
+dict_param_pair_template = Template("\"{{ key }}\": {{ val }}")
