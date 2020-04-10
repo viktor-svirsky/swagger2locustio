@@ -15,6 +15,9 @@ class SwaggerV2JsonParser(SwaggerBaseParser):
                 security[security_type] = Ellipsis
         return security
 
+    def _parse_host_data(self, file_content: dict) -> str:
+        return file_content.get("host")
+
     def _parse_paths_data(self, file_content: dict, mask: Dict[str, Set[str]]) -> dict:
         operations_white_list = mask["operations_white_list"]
         paths_white_list = mask["paths_white_list"]

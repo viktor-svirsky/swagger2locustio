@@ -19,7 +19,7 @@ class BaseGenerator:
         security_cases = None
         if security_data:
             security_cases = self.generate_security_cases(security_data)
-        code = self.generate_code_from_template(test_cases, security_cases)
+        code = self.generate_code_from_template(test_cases, security_cases, swagger_data["host"])
         return code
 
     def generate_test_cases(self, paths_data: dict) -> str:
@@ -51,13 +51,12 @@ class BaseGenerator:
                                             val = repr(val)
                                         pair = l_templates.path_param_pair_template.render(key=key, val=val)
                                         parameters_pairs.append(pair)
-                                    path_parameters_str = ", ".join(parameters_pairs)
-                                path_par = f".format({path_parameters_str})"
+                                    path_parameters_str = ", " + ", ".join(parameters_pairs)
                                 func = l_templates.func_template.render(
                                     func_name=func_name,
                                     method=method,
                                     path=path,
-                                    path_params=path_par,
+                                    path_params=path_parameters_str,
                                     query_params=query_parameters,
                                     header_params=header_parameters,
                                     cookie_params=cookie_parameters
@@ -136,10 +135,11 @@ class BaseGenerator:
                     raise ValueError(security_config)
         return "".join(security_cases)
 
-    def generate_code_from_template(self, test_cases: str, security_cases: str) -> str:
-        vars_str = "\n".join(f"{var} = " for var in self.vars_without_values.keys())
+    def generate_code_from_template(self, test_cases: str, security_cases: str, host: str) -> str:
+        vars_str = "\n".join(f"{var} = \"#\"" for var in self.vars_without_values.keys())
         return l_templates.file_template.render(
             required_vars=vars_str,
             test_cases=test_cases,
-            security_cases=security_cases
+            security_cases=security_cases,
+            host=host
         )
