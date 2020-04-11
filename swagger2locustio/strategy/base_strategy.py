@@ -7,11 +7,11 @@ from swagger2locustio.generators.base_generator import BaseGenerator
 
 
 class BaseStrategy(ABC):
-    def __init__(self, file_name: Path, results_path: Path, mask: Dict[str, Set[str]], strict: bool):
+    def __init__(self, file_name: Path, results_path: Path, mask: Dict[str, Set[str]], strict_level: int):
         file_name = str(file_name)
         self.swagger_file_content = self.read_file_content(file_name)
         self.mask = mask
-        self.generator = BaseGenerator(strict)
+        self.generator = BaseGenerator(strict_level)
         results_path.mkdir(exist_ok=True)
         self.results_file = str(results_path / "locustfile.py")
 
@@ -30,7 +30,7 @@ class BaseStrategy(ABC):
             self.swagger_file_content,
             self.mask
         )
-        code = self.generator.generate_code(swagger_data)
+        code = self.generator.generate_locustfile(swagger_data)
         self.write_results_to_file(code)
 
     def write_results_to_file(self, content: str):

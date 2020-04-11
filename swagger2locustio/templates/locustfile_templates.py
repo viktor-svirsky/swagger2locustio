@@ -6,6 +6,8 @@ import os
 from base64 import b64encode
 from locust import HttpLocust, TaskSet, between, task
 
+API_PREFIX = ""
+
 {{ required_vars }}
 
 class Tests(TaskSet):
@@ -21,7 +23,9 @@ class Tests(TaskSet):
 class WebsiteUser(HttpLocust):
     task_set = Tests
     wait_time = between(5.0, 9.0)
-
+    {% if host %}
+    host = "{{ host }}"
+{% endif %}
 """)
 
 
@@ -29,12 +33,12 @@ func_template = Template("""
     @task(1)
     def {{ func_name }}(self):
         self.client.{{ method }}(
-            url="{{ path }}"{{ path_params }},
+            url="{api_prefix}{{ path }}".format(api_prefix=API_PREFIX{{ path_params }}),
             params={{ query_params }},
             headers={{ header_params }},
             cookies={{ cookie_params }}
         )
-    
+
 """)
 
 
@@ -51,3 +55,4 @@ auth_key_header_template = Template("""
 """)
 
 path_param_pair_template = Template("{{ key }}={{ val }}")
+dict_param_pair_template = Template("\"{{ key }}\": {{ val }}")

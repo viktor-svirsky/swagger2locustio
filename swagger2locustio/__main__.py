@@ -30,11 +30,12 @@ def main():
         type=str
     )
     parser.add_argument(
-        "--strict",
+        "--strict-level",
         help="add paths with required params without default values to locust tests",
         required=False,
-        action="store_true",
-        default=False,
+        choices=(0, 1, 2),
+        type=int,
+        default=2,
     )
     parser.add_argument(
         "--operations",
@@ -104,7 +105,7 @@ def main():
     log.debug(f"Mask: {mask}")
 
     if ext == ".json":
-        swagger_strategy = JsonStrategy(swagger_file, results_path, mask, args.strict)
+        swagger_strategy = JsonStrategy(swagger_file, results_path, mask, args.strict_level)
     elif ext in (".yaml", ".yml"):
         swagger_strategy = Ellipsis
     else:
