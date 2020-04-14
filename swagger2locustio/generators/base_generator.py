@@ -116,9 +116,8 @@ class BaseGenerator:
 
             if self.strict_level == 0:
                 target_params[required_type].append(param_config)
-            elif self.strict_level == 1:
-                if default_val or (not default_val and required):
-                    target_params[required_type].append(param_config)
+            elif self.strict_level == 1 and (default_val or (not default_val and required)):
+                target_params[required_type].append(param_config)
             elif self.strict_level == 2:
                 if default_val:
                     target_params[required_type].append(param_config)
