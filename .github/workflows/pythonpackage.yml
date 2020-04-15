@@ -34,9 +34,10 @@ jobs:
         pip install -r requirements_dev.txt
     - name: Lint with flake8
       run: |
-        pip install flake8
-        # stop the build if there are flake8 errors
         flake8 swagger2locustio --count --statistics
+    - name: Check types with mypy
+      run: |
+        mypy swagger2locustio
     - name: Check with bandit
       run: |
         bandit -r swagger2locustio
