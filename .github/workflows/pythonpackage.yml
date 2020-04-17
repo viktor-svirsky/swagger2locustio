@@ -5,17 +5,16 @@ name: Python package
 
 on:
   push:
-    branches: 
+    branches:
       - master
       - develop
   pull_request:
-    branches: 
+    branches:
       - master
       - develop
 
 jobs:
   build:
-
     runs-on: ubuntu-latest
     strategy:
       matrix:
