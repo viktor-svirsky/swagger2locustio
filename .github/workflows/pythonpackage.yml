@@ -32,9 +32,9 @@ jobs:
         python -m pip install --upgrade pip
         pip install -r requirements.txt
         pip install -r requirements_dev.txt
-    - name: Lint with flake8
+    - name: Lint with pylint
       run: |
-        flake8 swagger2locustio --count --statistics
+        pylint --load-plugins=pylint.extensions.mccabe --rcfile=setup.cfg swagger2locustio
     - name: Check types with mypy
       run: |
         mypy swagger2locustio
