@@ -1,0 +1,38 @@
+repos:
+  - repo: local
+    default_language_version: python3.8
+    hooks:
+      - id: black
+        name: black
+        stages: [commit]
+        language: system
+        entry: black --line-length=120 swagger2locustio
+        types: [python]
+
+      - id: pylint
+        name: pylint
+        stages: [commit]
+        language: system
+        entry: pylint --rcfile=setup.cfg swagger2locustio
+        types: [python]
+
+      - id: mypy
+        name: mypy
+        stages: [commit]
+        language: system
+        entry: mypy swagger2locustio
+        types: [python]
+
+      - id: pytest
+        name: pytest
+        stages: [commit]
+        language: system
+        entry: pytest swagger2locustio/tests
+        types: [python]
+
+      - id: pytest-cov
+        name: pytest
+        stages: [push]
+        language: system
+        entry: pytest cov=swagger2locustio swagger2locustio/tests
+        types: [python]
