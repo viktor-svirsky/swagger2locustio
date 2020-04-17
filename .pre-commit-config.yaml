@@ -1,6 +1,5 @@
 repos:
   - repo: local
-    default_language_version: python3.8
     hooks:
       - id: black
         name: black
