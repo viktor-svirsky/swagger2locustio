@@ -46,4 +46,4 @@ jobs:
         pytest swagger2locustio/tests
     - name: Check test coverage
       run: |
-        pytest cov=swagger2locustio swagger2locustio/tests
+        pytest --cov=swagger2locusio --cov-fail-under=100 swagger2locustio/tests

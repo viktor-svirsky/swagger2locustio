@@ -7,6 +7,7 @@ repos:
         language: system
         entry: black --line-length=120 swagger2locustio
         types: [python]
+        pass_filenames: false
 
       - id: pylint
         name: pylint
@@ -14,6 +15,7 @@ repos:
         language: system
         entry: pylint --rcfile=setup.cfg swagger2locustio
         types: [python]
+        pass_filenames: false
 
       - id: mypy
         name: mypy
@@ -21,6 +23,7 @@ repos:
         language: system
         entry: mypy swagger2locustio
         types: [python]
+        pass_filenames: false
 
       - id: pytest
         name: pytest
@@ -28,10 +31,12 @@ repos:
         language: system
         entry: pytest swagger2locustio/tests
         types: [python]
+        pass_filenames: false
 
       - id: pytest-cov
         name: pytest
         stages: [push]
         language: system
-        entry: pytest cov=swagger2locustio swagger2locustio/tests
+        entry: pytest --cov=swagger2locusio --cov-fail-under=100 swagger2locustio/tests
         types: [python]
+        pass_filenames: false
