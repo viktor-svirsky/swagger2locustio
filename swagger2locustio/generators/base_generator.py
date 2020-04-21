@@ -27,7 +27,7 @@ class BaseGenerator:
         test_count = 0
         for path, methods_data in paths_data.items():
             for method, method_data in methods_data.items():
-                params_data = method_data.get("params", {})
+                params_data = method_data.get("parameters", {})
                 # responses_data = method_data.get("responses", {})
                 case = 0
                 try:
@@ -35,6 +35,8 @@ class BaseGenerator:
                 except ValueError as e:
                     logging.warning(e)
                     continue
+
+            # Issue: how about required params which will not be used in some of the these cases in such realization?
                 for path_parameters in params_combinations["path_params"]:
                     for query_parameters in params_combinations["query_params"]:
                         for header_parameters in params_combinations["header_params"]:
@@ -56,13 +58,17 @@ class BaseGenerator:
 
     def generate_params(self, params: dict) -> Dict[str, List[List[dict]]]:
         extracted_params = self._extract_params(params)
-        params_combinations = {
-            "path_params": self._create_params_combinations(extracted_params["path_params"]),
-            "query_params": self._create_params_combinations(extracted_params["query_params"]),
-            "header_params": self._create_params_combinations(extracted_params["header_params"]),
-            "cookie_params": self._create_params_combinations(extracted_params["cookie_params"]),
+        return {
+            key: self._create_params_combinations(extracted_params[key]) for key in
+            ["path_params", "query_params", "header_params", "cookie_params"]
         }
-        return params_combinations
+        # params_combinations = {
+        #     "path_params": self._create_params_combinations(extracted_params["path_params"]),
+        #     "query_params": self._create_params_combinations(extracted_params["query_params"]),
+        #     "header_params": self._create_params_combinations(extracted_params["header_params"]),
+        #     "cookie_params": self._create_params_combinations(extracted_params["cookie_params"]),
+        # }
+        # return params_combinations
 
     def _format_params(self, raw_params: List[dict], test_count: int, param_type) -> Union[str, dict]:
         params = []
