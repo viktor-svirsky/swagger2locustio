@@ -1,0 +1,50 @@
+repos:
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v2.4.0
+    hooks:
+      - id: trailing-whitespace
+      - id: end-of-file-fixer
+      - id: check-yaml
+      - id: check-added-large-files
+
+  - repo: local
+    hooks:
+      - id: black
+        name: black
+        stages: [commit]
+        language: system
+        entry: black --line-length=120 swagger2locustio
+        types: [python]
+        pass_filenames: false
+
+      - id: pylint
+        name: pylint
+        stages: [commit]
+        language: system
+        entry: pylint --load-plugins=pylint.extensions.mccabe --rcfile=setup.cfg swagger2locustio
+        types: [python]
+        pass_filenames: false
+
+      - id: mypy
+        name: mypy
+        stages: [commit]
+        language: system
+        entry: mypy swagger2locustio
+        types: [python]
+        pass_filenames: false
+
+      - id: pytest
+        name: pytest
+        stages: [commit]
+        language: system
+        entry: pytest swagger2locustio/tests
+        types: [python]
+        pass_filenames: false
+
+      - id: pytest-cov
+        name: pytest
+        stages: [push]
+        language: system
+        entry: pytest --cov=swagger2locusio --cov-fail-under=90 swagger2locustio/tests
+        types: [python]
+        pass_filenames: false
