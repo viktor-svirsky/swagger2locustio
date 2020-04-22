@@ -35,11 +35,10 @@ class BaseGenerator:
         test_count = 0
         for path, methods_data in paths_data.items():
             for method, method_data in methods_data.items():
-                params_data = method_data.get("params", {})
                 # responses_data = method_data.get("responses", {})
                 case = 0
                 try:
-                    params_combinations = self.generate_params(params_data)
+                    params_combinations = self.generate_params(method_data.get("params", {}))
                 except ValueError as error:
                     logging.warning(error)
                     continue
@@ -47,17 +46,17 @@ class BaseGenerator:
                     for query_parameters in params_combinations["query_params"]:
                         for header_parameters in params_combinations["header_params"]:
                             for cookie_parameters in params_combinations["cookie_params"]:
-                                func_name = f"test_{test_count}_case_{case}"
-                                func = l_templates.FUNC_TEMPLATE.render(
-                                    func_name=func_name,
-                                    method=method,
-                                    path=path,
-                                    path_params=self._format_params(path_parameters, test_count, "path"),
-                                    query_params=self._format_params(query_parameters, test_count, "query"),
-                                    header_params=self._format_params(header_parameters, test_count, "header"),
-                                    cookie_params=self._format_params(cookie_parameters, test_count, "cookie"),
+                                funcs.append(
+                                    l_templates.FUNC_TEMPLATE.render(
+                                        func_name=f"test_{test_count}_case_{case}",
+                                        method=method,
+                                        path=path,
+                                        path_params=self._format_params(path_parameters, test_count, "path"),
+                                        query_params=self._format_params(query_parameters, test_count, "query"),
+                                        header_params=self._format_params(header_parameters, test_count, "header"),
+                                        cookie_params=self._format_params(cookie_parameters, test_count, "cookie"),
+                                    )
                                 )
-                                funcs.append(func)
                                 case += 1
                 test_count += 1
         return "".join(funcs)
