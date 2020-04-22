@@ -7,7 +7,7 @@ from typing import List, Dict, Union
 
 from swagger2locustio.templates import locustfile_templates as l_templates
 
-log = logging.getLogger(__name__)
+LOG = logging.getLogger(__name__)
 
 
 class BaseGenerator:
@@ -48,7 +48,7 @@ class BaseGenerator:
                         for header_parameters in params_combinations["header_params"]:
                             for cookie_parameters in params_combinations["cookie_params"]:
                                 func_name = f"test_{test_count}_case_{case}"
-                                func = l_templates.func_template.render(
+                                func = l_templates.FUNC_TEMPLATE.render(
                                     func_name=func_name,
                                     method=method,
                                     path=path,
@@ -85,9 +85,9 @@ class BaseGenerator:
             else:
                 val = repr(val)
             if param_type == "path":
-                params.append(l_templates.path_param_pair_template.render(key=name, val=val))
+                params.append(l_templates.PATH_PARAM_PAIR_TEMPLATE.render(key=name, val=val))
             else:
-                params.append(l_templates.dict_param_pair_template.render(key=name, val=val))
+                params.append(l_templates.DICT_PARAM_PAIR_TEMPLATE.render(key=name, val=val))
         formatted_params = ""
         if param_type == "path":
             if params:
@@ -158,12 +158,12 @@ class BaseGenerator:
         security_cases = []
         for security_type, security_config in security_data.items():
             if security_type == "BasicAuth":
-                security_cases.append(l_templates.auth_basic_template)
+                security_cases.append(l_templates.AUTH_BASIC_TEMPLATE)
             elif security_type == "apiKey":
                 location = security_config.get("in")
                 name = security_config.get("name")
                 if location.lower() == "header" and name:
-                    security_cases.append(l_templates.auth_key_header_template.render(name=name))
+                    security_cases.append(l_templates.AUTH_KEY_HEADER_TEMPLATE.render(name=name))
                 else:
                     raise ValueError(security_config)
         return "".join(security_cases)
@@ -175,9 +175,9 @@ class BaseGenerator:
         for var, var_data in self.vars_without_values.items():
             required_vars.append(f"{var} = \"#\"  # {var_data}")
         vars_str = "\n".join(required_vars)
-        return l_templates.file_template.render(
             required_vars=vars_str,
             test_cases=test_cases,
             security_cases=security_cases,
             host=host
+        return l_templates.FILE_TEMPLATE.render(
         )

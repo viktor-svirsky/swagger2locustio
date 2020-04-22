@@ -3,7 +3,7 @@
 from jinja2 import Template
 
 
-file_template = Template("""
+FILE_TEMPLATE = Template("""
 import os
 from base64 import b64encode
 from locust import HttpLocust, TaskSet, between, task
@@ -31,7 +31,7 @@ class WebsiteUser(HttpLocust):
 """)
 
 
-func_template = Template("""
+FUNC_TEMPLATE = Template("""
     @task(1)
     def {{ func_name }}(self):
         self.client.{{ method }}(
@@ -44,7 +44,7 @@ func_template = Template("""
 """)
 
 
-auth_basic_template = Template("""
+AUTH_BASIC_TEMPLATE = Template("""
         auth_str = str(os.getenv(\"TEST_USER_LOGIN\")) + ":" + str(os.getenv(\"TEST_USER_PASSWORD\"))
         credentials = b64encode(auth_str.encode()).decode("utf-8")
         credentials = "Basic " + credentials
@@ -52,9 +52,9 @@ auth_basic_template = Template("""
 """)
 
 
-auth_key_header_template = Template("""
+AUTH_KEY_HEADER_TEMPLATE = Template("""
         self.client.headers.update({"{{ name }}": str(os.getenv(\"TEST_USER_API_KEY\"))})
 """)
 
-path_param_pair_template = Template("{{ key }}={{ val }}")
-dict_param_pair_template = Template("\"{{ key }}\": {{ val }}")
+PATH_PARAM_PAIR_TEMPLATE = Template("{{ key }}={{ val }}")
+DICT_PARAM_PAIR_TEMPLATE = Template('"{{ key }}": {{ val }}')
