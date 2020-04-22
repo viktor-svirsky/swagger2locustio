@@ -80,7 +80,7 @@ def main():
     args = parser.parse_args()
     settings.config_logger(args.loglevel.upper())
     log = logging.getLogger(__name__)
-    log.debug(f"Command line args: {args}")
+    log.debug("Command line args: %s", args)
     swagger_file = args.swagger_file
     results_path = args.results_path
     ext = swagger_file.suffix
@@ -102,7 +102,7 @@ def main():
         "tags_white_list": set(tags),
         "tags_black_list": set(not_tags)
     }
-    log.debug(f"Mask: {mask}")
+    log.debug("Mask: %s", mask)
 
     if ext == ".json":
         swagger_strategy = JsonStrategy(swagger_file, results_path, mask, args.strict_level)
@@ -110,7 +110,7 @@ def main():
         swagger_strategy = Ellipsis
     else:
         raise ValueError("Incorrect file format")
-    log.debug(f"Strategy: {swagger_strategy}")
+    log.debug("Strategy: %s", swagger_strategy)
     try:
         swagger_strategy.process()
     except ValueError as e:
