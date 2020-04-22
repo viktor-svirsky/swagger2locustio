@@ -13,8 +13,8 @@ class JsonStrategy(BaseStrategy):
 
     @staticmethod
     def read_file_content(file_name: str) -> dict:
-        with open(file_name) as f:
-            return json.load(f)
+        with open(file_name) as file:
+            return json.load(file)
 
     def get_specific_version_parser(self) -> SwaggerBaseParser:
         swagger_version = self.swagger_file_content.get("swagger")

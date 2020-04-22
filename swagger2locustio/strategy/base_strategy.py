@@ -34,5 +34,5 @@ class BaseStrategy(ABC):
         self.write_results_to_file(code)
 
     def write_results_to_file(self, content: str):
-        with open(self.results_file, "w") as f:
-            f.write(content)
+        with open(self.results_file, "w") as file:
+            file.write(content)

@@ -113,8 +113,8 @@ def main():
     log.debug("Strategy: %s", swagger_strategy)
     try:
         swagger_strategy.process()
-    except ValueError as e:
-        logging.error(e)
+    except ValueError as error:
+        logging.error(error)
 
 
 if __name__ == "__main__":
