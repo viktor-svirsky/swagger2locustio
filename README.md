@@ -1,33 +1,30 @@
 # swagger2locustio
 
 <p align="center">
-    <a href="" alt="PyPi Version">
-        <img src="" />
+    <a href="https://pypi.org/project/swagger2locustio/" alt="PyPi Version">
+        <img src="https://img.shields.io/pypi/v/swagger2locustio.svg" />
     </a>
-    <a href="" alt="Python Versions">
-        <img src="" />
+    <a href="https://pypi.org/project/swagger2locustio/" alt="Python Versions">
+        <img src="https://img.shields.io/pypi/pyversions/swagger2locustio.svg" />
     </a>
-    <a href="" alt="PyPi Downloads">
+    <!--a href="" alt="Coverage">
         <img src="" />
-    </a>
-    <a href="" alt="Coverage">
-        <img src="" />
-    </a>
+    </a-->
     <a href="https://github.com/vsvirsky/swagger2locustio/LICENSE" alt="MIT License">
         <img src="https://img.shields.io/github/license/vsvirsky/swagger2locustio" />
     </a>
-    <a href="" alt="Docs">
+    <!--a href="" alt="Docs">
         <img src="" />
-    </a>
+    </a-->
     <a href="https://github.com/vsvirsky/swagger2locustio/issues/" alt="Issues">
         <img src="https://img.shields.io/github/issues/vsvirsky/swagger2locustio" />
     </a>
     <a href="https://github.com/vsvirsky/swagger2locustio/issues/" alt="Pull Requests">
         <img src="https://img.shields.io/badge/PRs-welcome-brightgreen.svg?style=flat" />
     </a>
-    <a href="" alt="Contributors">
+    <!--a href="" alt="Contributors">
         <img src="" />
-    </a>
+    </a-->
     <a href="https://github.com/vsvirsky/swagger2locustio" alt="Github actions">
         <img src="https://github.com/vsvirsky/swagger2locustio/.github/workflows/pythonpackage.yml/badge.svg" />
     </a>
