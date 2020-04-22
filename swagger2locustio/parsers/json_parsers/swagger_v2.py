@@ -53,7 +53,8 @@ class SwaggerV2JsonParser(SwaggerBaseParser):
             api_paths[path] = valid_path_methods
         return api_paths
 
-    def _parse_params(self, params: dict) -> dict:
+    @staticmethod
+    def _parse_params(params: dict) -> dict:
         param_data = {}
         for param in params:
             param_name = param.get("name")

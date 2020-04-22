@@ -137,7 +137,8 @@ class BaseGenerator:
         }
         return params
 
-    def _create_params_combinations(self, params: Dict[str, list]) -> List[List[Dict]]:
+    @staticmethod
+    def _create_params_combinations(params: Dict[str, list]) -> List[List[Dict]]:
         not_required_query_params = params["not_required"]
         required_query_params = params["required"]
         params_combinations = []
@@ -148,7 +149,8 @@ class BaseGenerator:
                 params_combinations.append(combination)
         return params_combinations
 
-    def generate_security_cases(self, security_data: dict) -> str:
+    @staticmethod
+    def generate_security_cases(security_data: dict) -> str:
         """Function: generate security cases"""
 
         security_cases = []
