@@ -24,13 +24,13 @@ class BaseStrategy(ABC):
     def read_file_content(file_name: str) -> dict:
         """Function: read file content"""
 
-        pass
+        raise NotImplementedError
 
     @abstractmethod
     def get_specific_version_parser(self) -> SwaggerBaseParser:
         """Function: get specific version parser"""
 
-        pass
+        raise NotImplementedError
 
     def process(self):
         """Function: process"""
