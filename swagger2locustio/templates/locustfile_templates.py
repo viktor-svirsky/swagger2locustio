@@ -1,3 +1,5 @@
+"""Module: Swagger Base Parser"""
+
 from jinja2 import Template
 
 

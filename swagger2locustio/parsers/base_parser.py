@@ -1,9 +1,15 @@
+"""Module: Base Parser"""
+
 from abc import ABC, abstractmethod
 from typing import Set, Dict
 
 
 class SwaggerBaseParser(ABC):
+    """Class: Swagger Base Parser"""
+
     def parse_swagger_file(self, file_content: dict, mask: Dict[str, Set[str]]) -> dict:
+        """Function: parse swagger file"""
+
         data = {
             "host": self._parse_host_data(file_content),
             "security": self._parse_security_data(file_content),

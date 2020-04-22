@@ -1,3 +1,5 @@
+"""Module: SwaggerV2 JSON parser"""
+
 from copy import deepcopy
 from typing import Set, Dict
 
@@ -5,6 +7,8 @@ from swagger2locustio.parsers.base_parser import SwaggerBaseParser
 
 
 class SwaggerV2JsonParser(SwaggerBaseParser):
+    """Class: SwaggerV2 JSON parser"""
+
     def _parse_security_data(self, file_content: dict) -> dict:
         security = {}
         security_definitions = file_content.get("securityDefinitions", {})

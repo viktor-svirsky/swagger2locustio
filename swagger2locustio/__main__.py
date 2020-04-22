@@ -1,3 +1,5 @@
+"""Module: This is main module that actvates library"""
+
 import argparse
 import logging
 from pathlib import Path
@@ -7,6 +9,8 @@ from swagger2locustio.strategy.json_strategy import JsonStrategy
 
 
 def main():
+    """Launching function"""
+
     parser = argparse.ArgumentParser(formatter_class=argparse.ArgumentDefaultsHelpFormatter)
     parser.add_argument(
         "--swagger-file",

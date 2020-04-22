@@ -1,3 +1,5 @@
+"""Module: Base Generator"""
+
 import logging
 from itertools import combinations
 from copy import deepcopy
@@ -9,11 +11,15 @@ log = logging.getLogger(__name__)
 
 
 class BaseGenerator:
+    """Class: Base Generator"""
+
     def __init__(self, strict_level: int):
         self.strict_level = strict_level
         self.vars_without_values = {}
 
     def generate_locustfile(self, swagger_data: dict) -> str:
+        """Function: generate locustfile"""
+
         test_cases = self.generate_test_cases(swagger_data["paths"])
         security_data = swagger_data["security"]
         security_cases = None
@@ -23,6 +29,8 @@ class BaseGenerator:
         return code
 
     def generate_test_cases(self, paths_data: dict) -> str:
+        """Function: generate test cases"""
+
         funcs = []
         test_count = 0
         for path, methods_data in paths_data.items():
@@ -55,6 +63,8 @@ class BaseGenerator:
         return "".join(funcs)
 
     def generate_params(self, params: dict) -> Dict[str, List[List[dict]]]:
+        """Function: generate params"""
+
         extracted_params = self._extract_params(params)
         params_combinations = {
             "path_params": self._create_params_combinations(extracted_params["path_params"]),
@@ -143,6 +153,8 @@ class BaseGenerator:
         return params_combinations
 
     def generate_security_cases(self, security_data: dict) -> str:
+        """Function: generate security cases"""
+
         security_cases = []
         for security_type, security_config in security_data.items():
             if security_type == "BasicAuth":
@@ -157,6 +169,8 @@ class BaseGenerator:
         return "".join(security_cases)
 
     def generate_code_from_template(self, test_cases: str, security_cases: str, host: str) -> str:
+        """Function: generate code from template"""
+
         required_vars = []
         for var, var_data in self.vars_without_values.items():
             required_vars.append(f"{var} = \"#\"  # {var_data}")

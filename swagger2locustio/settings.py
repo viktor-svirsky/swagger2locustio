@@ -1,3 +1,5 @@
+"""Module: This module allows to configure library"""
+
 import logging.config
 
 API_OPERATIONS = ("get", "post", "put", "patch", "delete", "head", "options", "trace")
@@ -5,6 +7,8 @@ LOGGING_LEVELS = ("info", "debug", "warning", "error")
 
 
 def config_logger(loglevel: str):
+    """Function: Configure logger"""
+
     logging.config.dictConfig(
         {
             "version": 1,
