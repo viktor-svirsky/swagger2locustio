@@ -48,10 +48,7 @@ class SwaggerV2JsonParser(SwaggerBaseParser):
                 params = method_data.get("parameters", [])
                 responses = method_data.get("responses", {})
                 param_data = self._parse_params(params)
-                method_clean_data = {
-                    "params": param_data,
-                    "responses": responses
-                }
+                method_clean_data = {"params": param_data, "responses": responses}
                 valid_path_methods[path_method] = method_clean_data
             api_paths[path] = valid_path_methods
         return api_paths

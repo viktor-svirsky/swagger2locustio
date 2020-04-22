@@ -36,10 +36,7 @@ class BaseStrategy(ABC):
         """Function: process"""
 
         specific_version_parser = self.get_specific_version_parser()
-        swagger_data = specific_version_parser.parse_swagger_file(
-            self.swagger_file_content,
-            self.mask
-        )
+        swagger_data = specific_version_parser.parse_swagger_file(self.swagger_file_content, self.mask)
         code = self.generator.generate_locustfile(swagger_data)
         self.write_results_to_file(code)
 

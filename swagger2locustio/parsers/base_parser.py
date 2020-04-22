@@ -14,7 +14,7 @@ class SwaggerBaseParser(ABC):
             "host": self._parse_host_data(file_content),
             "security": self._parse_security_data(file_content),
             "paths": self._parse_paths_data(file_content, mask),
-            "definitions": self._parse_definitions(file_content)
+            "definitions": self._parse_definitions(file_content),
         }
         return data
 

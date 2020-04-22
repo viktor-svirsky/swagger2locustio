@@ -55,7 +55,7 @@ class BaseGenerator:
                                     path_params=self._format_params(path_parameters, test_count, "path"),
                                     query_params=self._format_params(query_parameters, test_count, "query"),
                                     header_params=self._format_params(header_parameters, test_count, "header"),
-                                    cookie_params=self._format_params(cookie_parameters, test_count, "cookie")
+                                    cookie_params=self._format_params(cookie_parameters, test_count, "cookie"),
                                 )
                                 funcs.append(func)
                                 case += 1
@@ -100,10 +100,7 @@ class BaseGenerator:
         return formatted_params
 
     def _extract_params(self, params: dict) -> Dict[str, Dict[str, list]]:
-        path_params = {
-            "required": [],
-            "not_required": []
-        }
+        path_params = {"required": [], "not_required": []}
         query_params = deepcopy(path_params)
         header_params = deepcopy(path_params)
         cookie_params = deepcopy(path_params)
@@ -173,11 +170,8 @@ class BaseGenerator:
 
         required_vars = []
         for var, var_data in self.vars_without_values.items():
-            required_vars.append(f"{var} = \"#\"  # {var_data}")
+            required_vars.append(f'{var} = "#"  # {var_data}')
         vars_str = "\n".join(required_vars)
-            required_vars=vars_str,
-            test_cases=test_cases,
-            security_cases=security_cases,
-            host=host
         return l_templates.FILE_TEMPLATE.render(
+            required_vars=vars_str, test_cases=test_cases, security_cases=security_cases, host=host
         )

@@ -12,26 +12,12 @@ def main():
     """Launching function"""
 
     parser = argparse.ArgumentParser(formatter_class=argparse.ArgumentDefaultsHelpFormatter)
+    parser.add_argument("--swagger-file", help="path to swagger file", required=True, type=Path)
     parser.add_argument(
-        "--swagger-file",
-        help="path to swagger file",
-        required=True,
-        type=Path
+        "--results-path", help="path to store locustfile.py", required=False, default=Path("generated"), type=Path,
     )
     parser.add_argument(
-        "--results-path",
-        help="path to store locustfile.py",
-        required=False,
-        default=Path("generated"),
-        type=Path
-    )
-    parser.add_argument(
-        "--loglevel",
-        help="logging level",
-        required=False,
-        default="info",
-        choices=settings.LOGGING_LEVELS,
-        type=str
+        "--loglevel", help="logging level", required=False, default="info", choices=settings.LOGGING_LEVELS, type=str,
     )
     parser.add_argument(
         "--strict-level",
@@ -47,39 +33,19 @@ def main():
         required=False,
         nargs="+",
         choices=settings.API_OPERATIONS,
-        default=["get"]
+        default=["get"],
     )
     parser.add_argument(
-        "--paths-white",
-        help="paths to use in api testing",
-        required=False,
-        nargs="+",
-        type=str,
-        default=[]
+        "--paths-white", help="paths to use in api testing", required=False, nargs="+", type=str, default=[]
     )
     parser.add_argument(
-        "--paths-black",
-        help="paths not to use in api testing",
-        required=False,
-        nargs="+",
-        type=str,
-        default=[]
+        "--paths-black", help="paths not to use in api testing", required=False, nargs="+", type=str, default=[]
     )
     parser.add_argument(
-        "--tags-white",
-        help="tags to use in api testing",
-        required=False,
-        nargs="+",
-        type=str,
-        default=[]
+        "--tags-white", help="tags to use in api testing", required=False, nargs="+", type=str, default=[]
     )
     parser.add_argument(
-        "--tags-black",
-        help="tags to use in api testing",
-        required=False,
-        nargs="+",
-        type=str,
-        default=[]
+        "--tags-black", help="tags to use in api testing", required=False, nargs="+", type=str, default=[]
     )
     args = parser.parse_args()
     settings.config_logger(args.loglevel.upper())
@@ -104,7 +70,7 @@ def main():
         "paths_white_list": set(paths),
         "paths_black_list": set(not_paths),
         "tags_white_list": set(tags),
-        "tags_black_list": set(not_tags)
+        "tags_black_list": set(not_tags),
     }
     log.debug("Mask: %s", mask)
 
