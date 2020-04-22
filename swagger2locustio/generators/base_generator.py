@@ -40,8 +40,8 @@ class BaseGenerator:
                 case = 0
                 try:
                     params_combinations = self.generate_params(params_data)
-                except ValueError as e:
-                    logging.warning(e)
+                except ValueError as error:
+                    logging.warning(error)
                     continue
                 for path_parameters in params_combinations["path_params"]:
                     for query_parameters in params_combinations["query_params"]:
