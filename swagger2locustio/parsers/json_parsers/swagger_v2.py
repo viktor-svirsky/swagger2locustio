@@ -23,7 +23,6 @@ class SwaggerV2JsonParser(SwaggerBaseParser):
         return file_content.get("host")
 
     def _parse_paths_data(self, file_content: dict, mask: Dict[str, Set[str]]) -> dict:
-        operations_white_list = mask["operations_white_list"]
         paths_white_list = mask["paths_white_list"]
         paths_black_list = mask["paths_black_list"]
         tags_white_list = mask["tags_white_list"]
@@ -35,21 +34,19 @@ class SwaggerV2JsonParser(SwaggerBaseParser):
             raise ValueError("No paths is found in swagger file")
         for path, path_data in paths.items():
             valid_path_methods = {}
-            path_name = path.lower()
-            if (paths_white_list and path_name not in paths_white_list) or (path_name in paths_black_list):
+            if (paths_white_list and path.lower() not in paths_white_list) or (path.lower() in paths_black_list):
                 continue
 
             for path_method, method_data in path_data.items():
-                if path_method.lower() not in operations_white_list:
+                if path_method.lower() not in mask["operations_white_list"]:
                     continue
                 tags = set(tag.lower() for tag in method_data.get("tags", []))
                 if tags_white_list and not tags_white_list.intersection(tags) or tags_black_list.intersection(tags):
                     continue
-                params = method_data.get("parameters", [])
-                responses = method_data.get("responses", {})
-                param_data = self._parse_params(params)
-                method_clean_data = {"params": param_data, "responses": responses}
-                valid_path_methods[path_method] = method_clean_data
+                valid_path_methods[path_method] = {
+                    "params": self._parse_params(method_data.get("parameters", [])),
+                    "responses": method_data.get("responses", {}),
+                }
             api_paths[path] = valid_path_methods
         return api_paths
 
