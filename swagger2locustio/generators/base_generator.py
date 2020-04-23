@@ -36,7 +36,6 @@ class BaseGenerator:
                     logging.warning(e)
                     continue
 
-            # Issue: how about required params which I guess will not be used in some of these cases in such realization?
                 for path_parameters in params_combinations["path_params"]:
                     for query_parameters in params_combinations["query_params"]:
                         for header_parameters in params_combinations["header_params"]:
