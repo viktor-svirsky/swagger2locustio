@@ -13,8 +13,7 @@ class TestStrategyJSON(unittest.TestCase):
 		self.generated_file = "test_data/locustfile.py"
 
 	def tearDown(self) -> None:
-		exists = os.path.exists(self.generated_file)
-		if exists:
+		if os.path.exists(self.generated_file):
 			os.remove(self.generated_file)
 
 	def _check_result(self, mask, locust_file_name, strict=False):
