@@ -9,13 +9,11 @@ jobs:
     runs-on: ubuntu-latest
     steps:
 
-      - name: pip install
-        run: | 
-          pip install 
-          coverage run -m pytest swagger2locustio/tests/
-          
-
       - name: Coveralls
         uses: coverallsapp/github-action@master
         with:
+          service_name: travis-pro
           github-token: ${{ secrets.GITHUB_TOKEN }}
+        run: | 
+          pip install 
+          coverage run -m pytest swagger2locustio/tests/
