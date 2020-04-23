@@ -8,8 +8,7 @@ from swagger2locustio.generators.base_generator import BaseGenerator
 
 class BaseStrategy(ABC):
     def __init__(self, file_name: Path, results_path: Path, mask: Dict[str, Set[str]], strict_level: int):
-        file_name = str(file_name)
-        self.swagger_file_content = self.read_file_content(file_name)
+        self.swagger_file_content = self.read_file_content(str(file_name))
         self.mask = mask
         self.generator = BaseGenerator(strict_level)
         results_path.mkdir(exist_ok=True)
