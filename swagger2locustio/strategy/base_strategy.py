@@ -30,7 +30,6 @@ class BaseStrategy(ABC):
             self.swagger_file_content,
             self.mask
         )
-        print(swagger_data)
         code = self.generator.generate_locustfile(swagger_data)
         self.write_results_to_file(code)
 

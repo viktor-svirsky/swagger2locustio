@@ -27,7 +27,7 @@ class BaseGenerator:
         test_count = 0
         for path, methods_data in paths_data.items():
             for method, method_data in methods_data.items():
-                params_data = method_data.get("parameters", {})
+                params_data = method_data.get("params", {})
                 # responses_data = method_data.get("responses", {})
                 case = 0
                 try:
