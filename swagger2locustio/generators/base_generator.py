@@ -30,47 +30,48 @@ class BaseGenerator:
 
     def generate_test_cases(self, paths_data: dict) -> str:
         """Method: generate test cases"""
-
         funcs = []
         test_count = 0
         for path, methods_data in paths_data.items():
             for method, method_data in methods_data.items():
                 # responses_data = method_data.get("responses", {})
-                case = 0
                 try:
                     params_combinations = self.generate_params(method_data.get("params", {}))
                 except ValueError as error:
                     logging.warning(error)
                     continue
-                for path_parameters in params_combinations["path_params"]:
-                    for query_parameters in params_combinations["query_params"]:
-                        for header_parameters in params_combinations["header_params"]:
-                            for cookie_parameters in params_combinations["cookie_params"]:
-                                funcs.append(
-                                    l_templates.FUNC_TEMPLATE.render(
-                                        func_name=f"test_{test_count}_case_{case}",
-                                        method=method,
-                                        path=path,
-                                        path_params=self._format_params(path_parameters, test_count, "path"),
-                                        query_params=self._format_params(query_parameters, test_count, "query"),
-                                        header_params=self._format_params(header_parameters, test_count, "header"),
-                                        cookie_params=self._format_params(cookie_parameters, test_count, "cookie"),
-                                    )
-                                )
-                                case += 1
+                for idx, combination in enumerate(params_combinations):
+                    funcs.append(
+                        l_templates.FUNC_TEMPLATE.render(
+                            func_name=f"test_{test_count}_case_{idx}",
+                            method=method,
+                            path=path,
+                            path_params=self._format_params(combination["path_params"], test_count, "path"),
+                            query_params=self._format_params(combination["query_params"], test_count, "query"),
+                            header_params=self._format_params(combination["header_params"], test_count, "header"),
+                            cookie_params=self._format_params(combination["cookie_params"], test_count, "cookie"),
+                        )
+                    )
                 test_count += 1
         return "".join(funcs)
 
-    def generate_params(self, params: dict) -> Dict[str, List[List[dict]]]:
+    def generate_params(self, params: dict) -> List[Dict[str, List[dict]]]:
         """Method: generate params"""
 
         extracted_params = self._extract_params(params)
-        params_combinations = {
-            "path_params": self._create_params_combinations(extracted_params["path_params"]),
-            "query_params": self._create_params_combinations(extracted_params["query_params"]),
-            "header_params": self._create_params_combinations(extracted_params["header_params"]),
-            "cookie_params": self._create_params_combinations(extracted_params["cookie_params"]),
-        }
+        params_combinations = []
+        for path_parameters in self._create_params_combinations(extracted_params["path_params"]):
+            for query_parameters in self._create_params_combinations(extracted_params["query_params"]):
+                for header_parameters in self._create_params_combinations(extracted_params["header_params"]):
+                    for cookie_parameters in self._create_params_combinations(extracted_params["cookie_params"]):
+                        params_combinations.append(
+                            {
+                                "path_params": path_parameters,
+                                "query_params": query_parameters,
+                                "header_params": header_parameters,
+                                "cookie_params": cookie_parameters,
+                            }
+                        )
         return params_combinations
 
     def _format_params(self, raw_params: List[dict], test_count: int, param_type) -> Union[str, dict]:
@@ -138,7 +139,7 @@ class BaseGenerator:
         return params
 
     @staticmethod
-    def _create_params_combinations(params: Dict[str, list]) -> List[List[Dict]]:
+    def _create_params_combinations(params: Dict[str, list]) -> List[List[dict]]:
         not_required_query_params = params["not_required"]
         required_query_params = params["required"]
         params_combinations = []
