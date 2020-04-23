@@ -5,21 +5,20 @@ name: Python package
 
 on:
   push:
-    branches: 
+    branches:
       - master
       - develop
   pull_request:
-    branches: 
+    branches:
       - master
       - develop
 
 jobs:
   build:
-
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        python-version: [3.5, 3.6, 3.7, 3.8]
+        python-version: [3.6, 3.7, 3.8]
 
     steps:
     - uses: actions/checkout@v2
@@ -32,9 +31,9 @@ jobs:
         python -m pip install --upgrade pip
         pip install -r requirements.txt
         pip install -r requirements_dev.txt
-    - name: Lint with flake8
+    - name: Lint with pylint
       run: |
-        flake8 swagger2locustio --count --statistics
+        pylint --load-plugins=pylint.extensions.mccabe --rcfile=setup.cfg swagger2locustio
     - name: Check types with mypy
       run: |
         mypy swagger2locustio
@@ -46,4 +45,4 @@ jobs:
         pytest swagger2locustio/tests
     - name: Check test coverage
       run: |
-        pytest cov=swagger2locustio swagger2locustio/tests
+        pytest --cov=swagger2locusio --cov-fail-under=100 swagger2locustio/tests
