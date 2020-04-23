@@ -36,7 +36,7 @@ class BaseGenerator:
                     logging.warning(e)
                     continue
 
-            # Issue: how about required params which will not be used in some of the these cases in such realization?
+            # Issue: how about required params which I guess will not be used in some of these cases in such realization?
                 for path_parameters in params_combinations["path_params"]:
                     for query_parameters in params_combinations["query_params"]:
                         for header_parameters in params_combinations["header_params"]:
@@ -62,13 +62,6 @@ class BaseGenerator:
             key: self._create_params_combinations(extracted_params[key]) for key in
             ["path_params", "query_params", "header_params", "cookie_params"]
         }
-        # params_combinations = {
-        #     "path_params": self._create_params_combinations(extracted_params["path_params"]),
-        #     "query_params": self._create_params_combinations(extracted_params["query_params"]),
-        #     "header_params": self._create_params_combinations(extracted_params["header_params"]),
-        #     "cookie_params": self._create_params_combinations(extracted_params["cookie_params"]),
-        # }
-        # return params_combinations
 
     def _format_params(self, raw_params: List[dict], test_count: int, param_type) -> Union[str, dict]:
         params = []
