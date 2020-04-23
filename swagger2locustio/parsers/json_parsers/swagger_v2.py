@@ -9,7 +9,7 @@ from swagger2locustio.parsers.base_parser import SwaggerBaseParser
 class SwaggerV2JsonParser(SwaggerBaseParser):
     """Class: SwaggerV2 JSON parser"""
 
-    def _parse_security_data(self, file_content: dict) -> dict:
+    def parse_security_data(self, file_content: dict) -> dict:
         security = {}
         security_definitions = file_content.get("securityDefinitions", {})
         for security_type, security_config in security_definitions.items():
@@ -19,10 +19,10 @@ class SwaggerV2JsonParser(SwaggerBaseParser):
                 security[security_type] = Ellipsis
         return security
 
-    def _parse_host_data(self, file_content: dict) -> str:
+    def parse_host_data(self, file_content: dict) -> str:
         return file_content.get("host")
 
-    def _parse_paths_data(self, file_content: dict, mask: Dict[str, Set[str]]) -> dict:
+    def parse_paths_data(self, file_content: dict, mask: Dict[str, Set[str]]) -> dict:
         paths_white_list = mask["paths_white_list"]
         paths_black_list = mask["paths_black_list"]
         tags_white_list = mask["tags_white_list"]
@@ -63,5 +63,5 @@ class SwaggerV2JsonParser(SwaggerBaseParser):
             param_data[param_name] = deepcopy(param)
         return param_data
 
-    def _parse_definitions(self, file_content: dict) -> dict:
+    def parse_definitions(self, file_content: dict) -> dict:
         return {}
