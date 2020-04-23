@@ -7,7 +7,7 @@ jobs:
   build:
     name: Build
     runs-on: ubuntu-latest
-    steps:`
+    steps:
 
     - name: pip install
       run: | 
