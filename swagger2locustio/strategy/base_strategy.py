@@ -22,18 +22,18 @@ class BaseStrategy(ABC):
     @staticmethod
     @abstractmethod
     def read_file_content(file_name: str) -> dict:
-        """Function: read file content"""
+        """Method: read file content"""
 
         raise NotImplementedError
 
     @abstractmethod
     def get_specific_version_parser(self) -> SwaggerBaseParser:
-        """Function: get specific version parser"""
+        """Method: get specific version parser"""
 
         raise NotImplementedError
 
     def process(self):
-        """Function: process"""
+        """Method: process"""
 
         specific_version_parser = self.get_specific_version_parser()
         swagger_data = specific_version_parser.parse_swagger_file(self.swagger_file_content, self.mask)
@@ -41,7 +41,7 @@ class BaseStrategy(ABC):
         self.write_results_to_file(code)
 
     def write_results_to_file(self, content: str):
-        """Function: write results to file"""
+        """Method: write results to file"""
 
         with open(self.results_file, "w") as file:
             file.write(content)

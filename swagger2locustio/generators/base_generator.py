@@ -18,7 +18,7 @@ class BaseGenerator:
         self.vars_without_values = {}
 
     def generate_locustfile(self, swagger_data: dict) -> str:
-        """Function: generate locustfile"""
+        """Method: generate locustfile"""
 
         test_cases = self.generate_test_cases(swagger_data["paths"])
         security_data = swagger_data["security"]
@@ -29,7 +29,7 @@ class BaseGenerator:
         return code
 
     def generate_test_cases(self, paths_data: dict) -> str:
-        """Function: generate test cases"""
+        """Method: generate test cases"""
 
         funcs = []
         test_count = 0
@@ -62,7 +62,7 @@ class BaseGenerator:
         return "".join(funcs)
 
     def generate_params(self, params: dict) -> Dict[str, List[List[dict]]]:
-        """Function: generate params"""
+        """Method: generate params"""
 
         extracted_params = self._extract_params(params)
         params_combinations = {
@@ -151,7 +151,7 @@ class BaseGenerator:
 
     @staticmethod
     def generate_security_cases(security_data: dict) -> str:
-        """Function: generate security cases"""
+        """Method: generate security cases"""
 
         security_cases = []
         for security_type, security_config in security_data.items():
@@ -167,7 +167,7 @@ class BaseGenerator:
         return "".join(security_cases)
 
     def generate_code_from_template(self, test_cases: str, security_cases: str, host: str) -> str:
-        """Function: generate code from template"""
+        """Method: generate code from template"""
 
         required_vars = []
         for var, var_data in self.vars_without_values.items():

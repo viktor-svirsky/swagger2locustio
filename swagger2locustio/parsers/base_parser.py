@@ -8,7 +8,7 @@ class SwaggerBaseParser(ABC):
     """Class: Swagger Base Parser"""
 
     def parse_swagger_file(self, file_content: dict, mask: Dict[str, Set[str]]) -> dict:
-        """Function: parse swagger file"""
+        """Method: parse swagger file"""
 
         data = {
             "host": self._parse_host_data(file_content),
