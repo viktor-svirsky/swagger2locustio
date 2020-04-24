@@ -3,7 +3,8 @@
 from jinja2 import Template
 
 
-FILE_TEMPLATE = Template("""import os
+FILE_TEMPLATE = Template(
+    """import os
 from base64 import b64encode
 from locust import HttpLocust, TaskSet, between, task
 
