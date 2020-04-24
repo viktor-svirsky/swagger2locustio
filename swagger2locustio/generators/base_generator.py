@@ -11,12 +11,12 @@ log = logging.getLogger(__name__)
 class BaseGenerator:
     def __init__(self, strict_level: int):
         self.strict_level = strict_level
-        self.vars_without_values = {}
+        self.vars_without_values: Dict[str, dict] = {}
 
     def generate_locustfile(self, swagger_data: dict) -> str:
         test_cases = self.generate_test_cases(swagger_data["paths"])
         security_data = swagger_data["security"]
-        security_cases = None
+        security_cases = ""
         if security_data:
             security_cases = self.generate_security_cases(security_data)
         code = self.generate_code_from_template(test_cases, security_cases, swagger_data["host"])
@@ -88,7 +88,7 @@ class BaseGenerator:
         return formatted_params
 
     def _extract_params(self, params: dict) -> Dict[str, Dict[str, list]]:
-        path_params = {
+        path_params: Dict[str, list] = {
             "required": [],
             "not_required": []
         }
@@ -100,7 +100,6 @@ class BaseGenerator:
             required = param_config.get("required")
             required_type = "required" if required else "not_required"
             default_val = param_config.get("default")
-            target_params = ...
             if param_location == "query":
                 target_params = query_params
             elif param_location == "path":
@@ -144,7 +143,7 @@ class BaseGenerator:
         security_cases = []
         for security_type, security_config in security_data.items():
             if security_type == "BasicAuth":
-                security_cases.append(l_templates.auth_basic_template)
+                security_cases.append(l_templates.auth_basic_template.render())
             elif security_type == "apiKey":
                 location = security_config.get("in")
                 name = security_config.get("name")
