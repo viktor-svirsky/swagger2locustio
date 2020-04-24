@@ -16,11 +16,11 @@ class SwaggerV2JsonParser(SwaggerBaseParser):
             if security_type in ("BasicAuth", "apiKey"):
                 security[security_type] = security_config
             else:
-                security[security_type] = Ellipsis
+                raise ValueError("Security type %s is not supported" % security_type)
         return security
 
     def parse_host_data(self, file_content: dict) -> str:
-        return file_content.get("host")
+        return file_content.get("host", "")
 
     def parse_paths_data(self, file_content: dict, mask: Dict[str, Set[str]]) -> dict:
         paths_white_list = mask["paths_white_list"]

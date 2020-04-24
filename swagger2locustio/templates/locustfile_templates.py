@@ -3,9 +3,7 @@
 from jinja2 import Template
 
 
-FILE_TEMPLATE = Template(
-    """
-import os
+FILE_TEMPLATE = Template("""import os
 from base64 import b64encode
 from locust import HttpLocust, TaskSet, between, task
 
@@ -26,7 +24,7 @@ class Tests(TaskSet):
 class WebsiteUser(HttpLocust):
     task_set = Tests
     wait_time = between(5.0, 9.0)
-    {% if host %}
+{% if host %}
     host = "{{ host }}"
 {% endif %}
 """

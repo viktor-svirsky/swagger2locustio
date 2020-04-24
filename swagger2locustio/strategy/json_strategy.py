@@ -29,8 +29,6 @@ class JsonStrategy(BaseStrategy):
         version = int(version[0])
         if version == 2:
             parser = SwaggerV2JsonParser()
-        elif version == 3:
-            parser = Ellipsis
         else:
-            raise ValueError("Incorrect swagger file version")
+            raise ValueError("There is no support for %s version of swagger" % version)
         return parser
