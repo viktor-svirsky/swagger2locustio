@@ -10,15 +10,15 @@ class TestStrategyJSON(unittest.TestCase):
 	def __init__(self, methodName):
 		super().__init__(methodName=methodName)
 		self.swagger_file = "swagger_file.json"
-		self.generated_file = "test_data/locustfile.py"
+		self.generated_file = "swagger2locustio/tests/unit_tests/test_data/locustfile.py"
 
 	def tearDown(self) -> None:
 		if os.path.exists(self.generated_file):
 			os.remove(self.generated_file)
 
 	def _check_result(self, mask, locust_file_name, strict=False):
-		json_str = JsonStrategy(file_name=Path("test_data/" + self.swagger_file),
-								results_path=Path("test_data/"),
+		json_str = JsonStrategy(file_name=Path("swagger2locustio/tests/unit_tests/test_data/" + self.swagger_file),
+								results_path=Path("swagger2locustio/tests/unit_tests/test_data/"),
 								mask=mask,
 								strict=strict)
 		json_str.process()
@@ -38,7 +38,7 @@ class TestStrategyJSON(unittest.TestCase):
 			"tags_white_list": set(),
 			"tags_black_list": set()
 		}
-		self._check_result(mask, "test_data/locustfile_with_example_testcase.py")
+		self._check_result(mask, "swagger2locustio/tests/unit_tests/test_data/locustfile_with_example_testcase.py")
 
 	def test_process_interface_with_paths_black_list(self):
 		mask = {
@@ -48,7 +48,7 @@ class TestStrategyJSON(unittest.TestCase):
 			"tags_white_list": set(),
 			"tags_black_list": set()
 		}
-		self._check_result(mask, "test_data/locustfile_without_testcases.py")
+		self._check_result(mask, "swagger2locustio/tests/unit_tests/test_data/locustfile_without_testcases.py")
 
 	def test_process_interface_with_paths_white_list(self):
 		mask = {
@@ -58,7 +58,7 @@ class TestStrategyJSON(unittest.TestCase):
 			"tags_white_list": set(),
 			"tags_black_list": set()
 		}
-		self._check_result(mask, "test_data/locustfile_with_example_testcase.py")
+		self._check_result(mask, "swagger2locustio/tests/unit_tests/test_data/locustfile_with_example_testcase.py")
 
 	def test_process_interface_without_operations_list(self):
 		mask = {
@@ -68,7 +68,7 @@ class TestStrategyJSON(unittest.TestCase):
 			"tags_white_list": set(),
 			"tags_black_list": set()
 		}
-		self._check_result(mask, "test_data/locustfile_without_testcases.py")
+		self._check_result(mask, "swagger2locustio/tests/unit_tests/test_data/locustfile_without_testcases.py")
 
 	def test_process_interface_with_tags_white_list(self):
 		mask = {
@@ -78,7 +78,7 @@ class TestStrategyJSON(unittest.TestCase):
 			"tags_white_list": {"example"},
 			"tags_black_list": set()
 		}
-		self._check_result(mask, "test_data/locustfile_with_example_testcase.py")
+		self._check_result(mask, "swagger2locustio/tests/unit_tests/test_data/locustfile_with_example_testcase.py")
 
 	def test_process_interface_with_tags_black_list(self):
 		mask = {
@@ -88,7 +88,7 @@ class TestStrategyJSON(unittest.TestCase):
 			"tags_white_list": set(),
 			"tags_black_list": {"example"}
 		}
-		self._check_result(mask, "test_data/locustfile_without_testcases.py")
+		self._check_result(mask, "swagger2locustio/tests/unit_tests/test_data/locustfile_without_testcases.py")
 
 
 if __name__ == "__main__":
