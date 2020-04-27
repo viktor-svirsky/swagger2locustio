@@ -6,13 +6,8 @@ from swagger2locustio.generators.base_generator import BaseGenerator
 class TestBaseGenerator(unittest.TestCase):
 
     def test_empty_swagger_file(self):
-        swagger_data = {
-            "host": dict(),
-            "security": dict(),
-            "paths": dict(),
-            "definitions": dict()
-        }
-        ref_locust_file = ("""import os
+        swagger_data = {"host": dict(), "security": dict(), "paths": dict(), "definitions": dict()}
+        ref_locust_file = """import os
 from base64 import b64encode
 from locust import HttpLocust, TaskSet, between, task\n
 API_PREFIX = ""\n\n\n
@@ -22,7 +17,7 @@ class Tests(TaskSet):\n
 class WebsiteUser(HttpLocust):
     task_set = Tests
     wait_time = between(5.0, 9.0)
-""")
+"""
         locust_file = BaseGenerator(strict_level=0).generate_locustfile(swagger_data=swagger_data)
         self.assertEqual(locust_file, ref_locust_file)
 
@@ -34,13 +29,14 @@ class WebsiteUser(HttpLocust):
 
     def test_query_params(self):
         swagger_data = {
-            "host": 'api.example.com',
+            "host": "api.example.com",
             "security": dict(),
-            "paths": {'/example':
-                          {'get': {'params': {'example': {'name': 'example', 'in': 'query', 'required': True}}}}},
-            "definitions": dict()
+            "paths": {
+                "/example": {"get": {"params": {"example": {"name": "example", "in": "query", "required": True}}}}
+            },
+            "definitions": dict(),
         }
-        ref_locust_file = ("""import os
+        ref_locust_file = """import os
 from base64 import b64encode
 from locust import HttpLocust, TaskSet, between, task\n
 API_PREFIX = ""\n
@@ -60,20 +56,21 @@ class WebsiteUser(HttpLocust):
     task_set = Tests
     wait_time = between(5.0, 9.0)\n
     host = \"api.example.com\"
-""")
+"""
 
         locust_file = BaseGenerator(strict_level=0).generate_locustfile(swagger_data=swagger_data)
         self.assertEqual(locust_file, ref_locust_file)
 
     def test_path_params(self):
         swagger_data = {
-            "host": 'api.example.com',
+            "host": "api.example.com",
             "security": dict(),
-            "paths": {'/example':
-                          {'get': {'params': {'example': {'name': 'example', 'in': 'path', 'required': True}}}}},
-            "definitions": dict()
+            "paths": {
+                "/example": {"get": {"params": {"example": {"name": "example", "in": "path", "required": True}}}}
+            },
+            "definitions": dict(),
         }
-        ref_locust_file = ("""import os
+        ref_locust_file = """import os
 from base64 import b64encode
 from locust import HttpLocust, TaskSet, between, task\n
 API_PREFIX = ""\n
@@ -93,20 +90,21 @@ class WebsiteUser(HttpLocust):
     task_set = Tests
     wait_time = between(5.0, 9.0)\n
     host = \"api.example.com\"
-""")
+"""
 
         locust_file = BaseGenerator(strict_level=0).generate_locustfile(swagger_data=swagger_data)
         self.assertEqual(locust_file, ref_locust_file)
 
     def test_header_params(self):
         swagger_data = {
-            "host": 'api.example.com',
+            "host": "api.example.com",
             "security": dict(),
-            "paths": {'/example':
-                          {'get': {'params': {'example': {'name': 'example', 'in': 'header', 'required': True}}}}},
-            "definitions": dict()
+            "paths": {
+                "/example": {"get": {"params": {"example": {"name": "example", "in": "header", "required": True}}}}
+            },
+            "definitions": dict(),
         }
-        ref_locust_file = ("""import os
+        ref_locust_file = """import os
 from base64 import b64encode
 from locust import HttpLocust, TaskSet, between, task\n
 API_PREFIX = ""\n
@@ -126,20 +124,21 @@ class WebsiteUser(HttpLocust):
     task_set = Tests
     wait_time = between(5.0, 9.0)\n
     host = \"api.example.com\"
-""")
+"""
 
         locust_file = BaseGenerator(strict_level=0).generate_locustfile(swagger_data=swagger_data)
         self.assertEqual(locust_file, ref_locust_file)
 
     def test_cookie_params(self):
         swagger_data = {
-            "host": 'api.example.com',
+            "host": "api.example.com",
             "security": dict(),
-            "paths": {'/example':
-                          {'get': {'params': {'example': {'name': 'example', 'in': 'cookie', 'required': True}}}}},
-            "definitions": dict()
+            "paths": {
+                "/example": {"get": {"params": {"example": {"name": "example", "in": "cookie", "required": True}}}}
+            },
+            "definitions": dict(),
         }
-        ref_locust_file = ("""import os
+        ref_locust_file = """import os
 from base64 import b64encode
 from locust import HttpLocust, TaskSet, between, task\n
 API_PREFIX = ""\n
@@ -159,7 +158,7 @@ class WebsiteUser(HttpLocust):
     task_set = Tests
     wait_time = between(5.0, 9.0)\n
     host = \"api.example.com\"
-""")
+"""
 
         locust_file = BaseGenerator(strict_level=0).generate_locustfile(swagger_data=swagger_data)
         self.assertEqual(locust_file, ref_locust_file)
