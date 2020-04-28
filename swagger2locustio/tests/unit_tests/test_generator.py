@@ -50,7 +50,7 @@ class Tests(TaskSet):\n
             url="{api_prefix}/example".format(api_prefix=API_PREFIX),
             params={"example": example_test_0},
             headers={},
-            cookies={}
+            cookies={},
         )\n\n
 class WebsiteUser(HttpLocust):
     task_set = Tests
@@ -84,7 +84,7 @@ class Tests(TaskSet):\n
             url="{api_prefix}/example".format(api_prefix=API_PREFIX, example=example_test_0),
             params={},
             headers={},
-            cookies={}
+            cookies={},
         )\n\n
 class WebsiteUser(HttpLocust):
     task_set = Tests
@@ -118,7 +118,7 @@ class Tests(TaskSet):\n
             url="{api_prefix}/example".format(api_prefix=API_PREFIX),
             params={},
             headers={"example": example_test_0},
-            cookies={}
+            cookies={},
         )\n\n
 class WebsiteUser(HttpLocust):
     task_set = Tests
@@ -152,7 +152,7 @@ class Tests(TaskSet):\n
             url="{api_prefix}/example".format(api_prefix=API_PREFIX),
             params={},
             headers={},
-            cookies={"example": example_test_0}
+            cookies={"example": example_test_0},
         )\n\n
 class WebsiteUser(HttpLocust):
     task_set = Tests
