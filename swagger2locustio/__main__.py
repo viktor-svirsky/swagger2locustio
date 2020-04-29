@@ -1,3 +1,5 @@
+"""Module: This is main module that actvates library"""
+
 import argparse
 import logging
 from pathlib import Path
@@ -7,27 +9,15 @@ from swagger2locustio.strategy.json_strategy import JsonStrategy
 
 
 def main():
+    """Launching function"""
+
     parser = argparse.ArgumentParser(formatter_class=argparse.ArgumentDefaultsHelpFormatter)
+    parser.add_argument("--swagger-file", help="path to swagger file", required=True, type=Path)
     parser.add_argument(
-        "--swagger-file",
-        help="path to swagger file",
-        required=True,
-        type=Path
+        "--results-path", help="path to store locustfile.py", required=False, default=Path("generated"), type=Path,
     )
     parser.add_argument(
-        "--results-path",
-        help="path to store locustfile.py",
-        required=False,
-        default=Path("generated"),
-        type=Path
-    )
-    parser.add_argument(
-        "--loglevel",
-        help="logging level",
-        required=False,
-        default="info",
-        choices=settings.LOGGING_LEVELS,
-        type=str
+        "--loglevel", help="logging level", required=False, default="info", choices=settings.LOGGING_LEVELS, type=str,
     )
     parser.add_argument(
         "--strict-level",
@@ -43,44 +33,24 @@ def main():
         required=False,
         nargs="+",
         choices=settings.API_OPERATIONS,
-        default=["get"]
+        default=["get"],
     )
     parser.add_argument(
-        "--paths-white",
-        help="paths to use in api testing",
-        required=False,
-        nargs="+",
-        type=str,
-        default=[]
+        "--paths-white", help="paths to use in api testing", required=False, nargs="+", type=str, default=[]
     )
     parser.add_argument(
-        "--paths-black",
-        help="paths not to use in api testing",
-        required=False,
-        nargs="+",
-        type=str,
-        default=[]
+        "--paths-black", help="paths not to use in api testing", required=False, nargs="+", type=str, default=[]
     )
     parser.add_argument(
-        "--tags-white",
-        help="tags to use in api testing",
-        required=False,
-        nargs="+",
-        type=str,
-        default=[]
+        "--tags-white", help="tags to use in api testing", required=False, nargs="+", type=str, default=[]
     )
     parser.add_argument(
-        "--tags-black",
-        help="tags to use in api testing",
-        required=False,
-        nargs="+",
-        type=str,
-        default=[]
+        "--tags-black", help="tags to use in api testing", required=False, nargs="+", type=str, default=[]
     )
     args = parser.parse_args()
     settings.config_logger(args.loglevel.upper())
     log = logging.getLogger(__name__)
-    log.debug(f"Command line args: {args}")
+    log.debug("Command line args: %s", args)
     swagger_file = args.swagger_file
     results_path = args.results_path
     ext = swagger_file.suffix
@@ -100,9 +70,9 @@ def main():
         "paths_white_list": set(paths),
         "paths_black_list": set(not_paths),
         "tags_white_list": set(tags),
-        "tags_black_list": set(not_tags)
+        "tags_black_list": set(not_tags),
     }
-    log.debug(f"Mask: {mask}")
+    log.debug("Mask: %s", mask)
 
     if ext == ".json":
         swagger_strategy = JsonStrategy(swagger_file, results_path, mask, args.strict_level)
@@ -110,11 +80,11 @@ def main():
         swagger_strategy = Ellipsis
     else:
         raise ValueError("Incorrect file format")
-    log.debug(f"Strategy: {swagger_strategy}")
+    log.debug("Strategy: %s", swagger_strategy)
     try:
         swagger_strategy.process()
-    except ValueError as e:
-        logging.error(e)
+    except ValueError as error:
+        logging.error(error)
 
 
 if __name__ == "__main__":
