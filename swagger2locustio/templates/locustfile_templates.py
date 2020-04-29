@@ -8,6 +8,8 @@ FILE_TEMPLATE = Template(
 from base64 import b64encode
 from locust import HttpLocust, TaskSet, between, task
 
+from helpers import Helper
+
 API_PREFIX = ""
 
 {{ required_vars }}

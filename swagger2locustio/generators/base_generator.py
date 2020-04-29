@@ -80,9 +80,11 @@ class BaseGenerator:
         for param in raw_params:
             name = param.get("name")
             val = param.get("default")
-            if not val:
-                val = f"{name}_test_{test_count}"
-                self.vars_without_values[val] = param
+            if val is None:
+                param_value_type = param.get("type")
+                val = helper_templates.HELPER_MAPPING[param_value_type] + "()"
+                # val = f"{name}_test_{test_count}"
+                # self.vars_without_values[val] = param
             else:
                 val = repr(val)
             if param_type == "path":

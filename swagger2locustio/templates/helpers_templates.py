@@ -1,6 +1,7 @@
+from collections import defaultdict
 from jinja2 import Template
 
-HELPER_MAPPING = {}
+HELPER_MAPPING = defaultdict(lambda: "Helper.get_default_value")
 HELPER_MAPPING.update(dict.fromkeys(["int", "integer", "int32", "int64"], "Helper.get_int_value"))
 HELPER_MAPPING.update(dict.fromkeys(["float", "double", "number"], "Helper.get_float_value"))
 HELPER_MAPPING.update(dict.fromkeys(["bool", "boolean"], "Helper.get_float_value"))
@@ -13,6 +14,10 @@ import string
 
 
 class Helper:
+    @staticmethod
+    def get_default_value():
+        return None
+
     @staticmethod
     def get_int_value(start: int = -100, end: int = 100):
         return random.randint(start, end)
