@@ -13,6 +13,7 @@ class BaseStrategy(ABC):
         self.mask = mask
         self.generator = BaseGenerator(strict_level)
         results_path.mkdir(exist_ok=True)
+        self.results_path = results_path
         self.results_file = str(results_path / "locustfile.py")
 
     @staticmethod
@@ -31,7 +32,10 @@ class BaseStrategy(ABC):
             self.mask
         )
         code = self.generator.generate_locustfile(swagger_data)
+        helpers = self.generator.generate_helpers_from_template()
         self.write_results_to_file(code)
+        with open(self.results_path / "helpers.py", "w") as f:
+            f.write(helpers)
 
     def write_results_to_file(self, content: str):
         with open(self.results_file, "w") as f:

@@ -4,6 +4,7 @@ from copy import deepcopy
 from typing import List, Dict, Union
 
 from swagger2locustio.templates import locustfile_templates as l_templates
+from swagger2locustio.templates import helpers_templates as helper_templates
 
 log = logging.getLogger(__name__)
 
@@ -165,3 +166,7 @@ class BaseGenerator:
             security_cases=security_cases,
             host=host
         )
+
+    @staticmethod
+    def generate_helpers_from_template() -> str:
+        return helper_templates.HELPER_CLASS_TEMPLATE.render()
