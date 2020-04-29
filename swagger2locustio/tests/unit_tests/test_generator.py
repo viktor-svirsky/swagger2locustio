@@ -4,7 +4,6 @@ from swagger2locustio.generators.base_generator import BaseGenerator
 
 
 class TestBaseGenerator(unittest.TestCase):
-
     def test_empty_swagger_file(self):
         swagger_data = {"host": dict(), "security": dict(), "paths": dict(), "definitions": dict()}
         ref_locust_file = """import os
