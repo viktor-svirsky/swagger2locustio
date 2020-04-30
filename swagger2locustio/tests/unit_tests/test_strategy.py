@@ -10,60 +10,10 @@ class TestStrategyJSON(unittest.TestCase):
         super().__init__(methodName=methodName)
         self.swagger_file = "swagger_file.json"
         self.generated_file = "swagger2locustio/tests/unit_tests/test_data/locustfile.py"
-        self.LOCUSTFILE_WITH_EXAMPLE_TESTCASE = """import os
-from base64 import b64encode
-from locust import HttpLocust, TaskSet, between, task
-
-API_PREFIX = ""
-
-param1_test_0 = "#"  # {'name': 'param1', 'in': 'query', 'description': 'description', 'required': True, 'type': 'number', 'format': 'double'}
-param2_test_0 = "#"  # {'name': 'param2', 'in': 'query', 'description': 'description', 'required': True, 'type': 'number', 'format': 'double'}
-
-class Tests(TaskSet):
-
-    def on_start(self):
-
-        pass
-
-
-    @task(1)
-    def test_0_case_0(self):
-        self.client.get(
-            url="{api_prefix}/example".format(api_prefix=API_PREFIX),
-            params={"param1": param1_test_0, "param2": param2_test_0},
-            headers={},
-            cookies={},
-        )
-
-
-class WebsiteUser(HttpLocust):
-    task_set = Tests
-    wait_time = between(5.0, 9.0)
-
-    host = "api.example.com"
-"""
-        self.LOCUSTFILE_WITHOUT_TESTCASES = """import os
-from base64 import b64encode
-from locust import HttpLocust, TaskSet, between, task
-
-API_PREFIX = ""
-
-
-
-class Tests(TaskSet):
-
-    def on_start(self):
-
-        pass
-
-
-
-class WebsiteUser(HttpLocust):
-    task_set = Tests
-    wait_time = between(5.0, 9.0)
-
-    host = "api.example.com"
-"""
+        with open("swagger2locustio/tests/unit_tests/test_data/locustfile_with_example_testcase.txt", "r") as file:
+            self.LOCUSTFILE_WITH_EXAMPLE_TESTCASE = file.read()
+        with open("swagger2locustio/tests/unit_tests/test_data/locustfile_without_testcases.txt", "r") as file:
+            self.LOCUSTFILE_WITHOUT_TESTCASES = file.read()
 
     def tearDown(self) -> None:
         if os.path.exists(self.generated_file):
