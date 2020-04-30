@@ -9,11 +9,13 @@ class TestStrategyJSON(unittest.TestCase):
     def __init__(self, methodName):
         super().__init__(methodName=methodName)
         self.swagger_file = "swagger_file.json"
-        self.generated_file = "swagger2locustio/tests/unit_tests/test_data/locustfile.py"
-        with open("swagger2locustio/tests/unit_tests/test_data/locustfile_with_example_testcase.txt", "r") as file:
-            self.LOCUSTFILE_WITH_EXAMPLE_TESTCASE = file.read()
-        with open("swagger2locustio/tests/unit_tests/test_data/locustfile_without_testcases.txt", "r") as file:
-            self.LOCUSTFILE_WITHOUT_TESTCASES = file.read()
+        self.generated_file = os.path.join("swagger2locustio", "tests", "unit_tests", "test_data", "locustfile.py")
+        self.LOCUSTFILE_WITH_EXAMPLE_TESTCASE = Path(
+            os.path.join("swagger2locustio", "tests", "unit_tests", "test_data", "locustfile_with_example_testcase.txt")
+        ).read_text()
+        self.LOCUSTFILE_WITHOUT_TESTCASES = Path(
+            os.path.join("swagger2locustio", "tests", "unit_tests", "test_data", "locustfile_without_testcases.txt")
+        ).read_text()
 
     def tearDown(self) -> None:
         if os.path.exists(self.generated_file):
