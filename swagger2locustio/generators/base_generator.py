@@ -100,10 +100,7 @@ class BaseGenerator:
         return formatted_params
 
     def _extract_params(self, params: dict) -> Dict[str, Dict[str, list]]:
-        path_params: Dict[str, list] = {
-            "required": [],
-            "not_required": []
-        }
+        path_params: Dict[str, list] = {"required": [], "not_required": []}
         query_params = deepcopy(path_params)
         header_params = deepcopy(path_params)
         cookie_params = deepcopy(path_params)

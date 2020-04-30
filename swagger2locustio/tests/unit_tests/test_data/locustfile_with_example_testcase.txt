@@ -20,7 +20,7 @@ class Tests(TaskSet):
             url="{api_prefix}/example".format(api_prefix=API_PREFIX),
             params={"param1": param1_test_0, "param2": param2_test_0},
             headers={},
-            cookies={}
+            cookies={},
         )
 
 
