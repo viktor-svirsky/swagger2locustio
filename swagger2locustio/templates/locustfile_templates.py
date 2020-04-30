@@ -42,7 +42,7 @@ FUNC_TEMPLATE = Template(
             url="{api_prefix}{{ path }}".format(api_prefix=API_PREFIX{{ path_params }}),
             params={{ query_params }},
             headers={{ header_params }},
-            cookies={{ cookie_params }}
+            cookies={{ cookie_params }},
         )
 
 """
