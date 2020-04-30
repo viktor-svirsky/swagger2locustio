@@ -29,7 +29,7 @@ repos:
         name: mypy
         stages: [commit]
         language: system
-        entry: mypy swagger2locustio
+        entry: mypy swagger2locustio --config-file=setup.cfg
         types: [python]
         pass_filenames: false
 
