@@ -6,3 +6,4 @@ pytest-cov==2.8.1
 coveralls==2.0.0
 bandit==1.6.2
 mypy==0.770
+coloredlogs==14.0
