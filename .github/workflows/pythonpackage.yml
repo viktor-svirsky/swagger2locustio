@@ -37,7 +37,7 @@ jobs:
         pylint --load-plugins=pylint.extensions.mccabe --rcfile=setup.cfg swagger2locustio
     - name: Check types with mypy
       run: |
-        mypy swagger2locustio
+        mypy swagger2locustio --config-file=setup.cfg
     - name: Check with bandit
       run: |
         bandit -r swagger2locustio
