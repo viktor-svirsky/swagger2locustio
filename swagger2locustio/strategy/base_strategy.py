@@ -11,13 +11,11 @@ from swagger2locustio.generators.base_generator import BaseGenerator
 class BaseStrategy(ABC):
     """Class: Base Strategy"""
 
-    def __init__(self, file_name: Path, results_path: Path, mask: Dict[str, Set[str]], strict_level: int):
+    def __init__(self, file_name: Path, results_path: Path, mask: Dict[str, Set[str]], strict_level: int, max_folder_depth: int):
         self.swagger_file_content = self.read_file_content(str(file_name))
         self.mask = mask
-        self.generator = BaseGenerator(strict_level)
+        self.generator = BaseGenerator(results_path, strict_level, max_folder_depth)
         results_path.mkdir(exist_ok=True)
-        self.results_path = results_path
-        self.results_file = str(results_path / "locustfile.py")
 
     @staticmethod
     @abstractmethod
@@ -37,14 +35,4 @@ class BaseStrategy(ABC):
 
         specific_version_parser = self.get_specific_version_parser()
         swagger_data = specific_version_parser.parse_swagger_file(self.swagger_file_content, self.mask)
-        code = self.generator.generate_locustfile(swagger_data)
-        helpers = self.generator.generate_helpers_from_template()
-        self.write_results_to_file(code)
-        with open(self.results_path / "helpers.py", "w") as f:
-            f.write(helpers)
-
-    def write_results_to_file(self, content: str):
-        """Method: write results to file"""
-
-        with open(self.results_file, "w") as file:
-            file.write(content)
+        self.generator.generate_locustfiles(swagger_data)
