@@ -6,6 +6,7 @@ from pathlib import Path
 
 from swagger2locustio import settings
 from swagger2locustio.strategy.json_strategy import JsonStrategy
+from swagger2locustio.strategy.yaml_strategy import YamlStrategy
 
 
 def main():
@@ -77,7 +78,7 @@ def main():
     if ext == ".json":
         swagger_strategy = JsonStrategy(swagger_file, results_path, mask, args.strict_level)
     elif ext in (".yaml", ".yml"):
-        swagger_strategy = Ellipsis
+        swagger_strategy = YamlStrategy(swagger_file, results_path, mask, args.strict_level)
     else:
         raise ValueError("Incorrect file format")
     log.debug("Strategy: %s", swagger_strategy)
