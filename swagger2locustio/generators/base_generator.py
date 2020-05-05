@@ -1,5 +1,6 @@
 """Module: Base Generator"""
 
+import re
 import logging
 from dataclasses import dataclass, field
 from pathlib import Path
@@ -12,9 +13,13 @@ from swagger2locustio.templates import constants_templates
 
 LOG = logging.getLogger(__name__)
 
+PATH_PARAMS_PATTERN = re.compile(r"{.*?}", re.UNICODE)
+IDENTIFIER_PATTERN = re.compile(r"[^\d\w/]", re.UNICODE)
+
 
 @dataclass(frozen=True)
 class Constant:
+    """Data Class: Constant"""
     name: str
     val: Any
     value_type: str
@@ -22,12 +27,14 @@ class Constant:
 
 @dataclass
 class TestMethod:
+    """Data Class: Test Method"""
     method_data: str
     constants: List[Constant] = field(default_factory=lambda: [])
 
 
 @dataclass
 class TestClass:
+    """Data Class: Test Class"""
     file_path: Path
     file_name: str
     class_name: str
@@ -43,6 +50,7 @@ class BaseGenerator:
         self.constants_path.mkdir(exist_ok=True, parents=True)
         self.tests_path = self.results_path / "tests"
         self.tests_path.mkdir(exist_ok=True, parents=True)
+        self.strict_level = strict_level
 
     def generate_locustfiles(self, swagger_data: dict) -> None:
         """Method: generate locustfiles structure"""
@@ -104,14 +112,11 @@ class BaseGenerator:
                 except ValueError as error:
                     logging.warning(error)
                     continue
-                import re
 
-                path_params_pattern = re.compile(r"{.*?}", re.UNICODE)
-                identifier_pattern = re.compile(r"[^\d\w/]", re.UNICODE)
-                test_name = re.sub(path_params_pattern, "", path)
+                test_name = re.sub(PATH_PARAMS_PATTERN, "", path)
 
                 file_path = test_name.strip("/")
-                file_path = re.sub(identifier_pattern, "_", file_path)
+                file_path = re.sub(IDENTIFIER_PATTERN, "_", file_path)
                 file_path = file_path.split("/")
 
                 file_name = file_path[-1]
