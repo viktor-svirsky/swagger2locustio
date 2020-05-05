@@ -124,7 +124,7 @@ class BaseGenerator:
                 if not class_name.isidentifier():
                     class_name = "Test_" + class_name
 
-                constants = []
+                constants: List[Constant] = []
                 test_method_data = locustfile_templates.FUNC_TEMPLATE.render(
                     func_name=f"{file_name}_test_{test_count}",
                     method=method,
@@ -150,10 +150,10 @@ class BaseGenerator:
     def extract_params(params: dict) -> Dict[str, list]:
         """Method: extract params"""
 
-        path_params = []
-        query_params = []
-        header_params = []
-        cookie_params = []
+        path_params: List[dict] = []
+        query_params: List[dict] = []
+        header_params: List[dict] = []
+        cookie_params: List[dict] = []
         for param, param_config in params.items():
             param_location = param_config.get("in")
             if param_location == "query":
@@ -180,10 +180,10 @@ class BaseGenerator:
     def _format_params(raw_params: List[dict], param_type, constants) -> Union[str, dict]:
         params = []
         for param in raw_params:
-            name = param.get("name")
+            name = param.get("name", "")
             const_name = name.upper()
             val = param.get("default")
-            param_value_type = param.get("type")
+            param_value_type = param.get("type", "")
             if val is None:
                 const_val = helpers_templates.HELPER_MAPPING.get(param_value_type, "") + "()"
             else:
