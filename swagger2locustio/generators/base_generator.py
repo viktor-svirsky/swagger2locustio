@@ -4,7 +4,6 @@ import logging
 from dataclasses import dataclass, field
 from pathlib import Path
 from typing import List, Dict, Union, Any
-from pprint import pprint
 
 from swagger2locustio.templates import locustfile_templates
 from swagger2locustio.templates import helpers_templates
@@ -124,7 +123,7 @@ class BaseGenerator:
 
                 constants = []
                 test_method_data = locustfile_templates.FUNC_TEMPLATE.render(
-                    func_name=f"test_{test_count}",
+                    func_name=f"{file_name}_test_{test_count}",
                     method=method,
                     path=path,
                     # TODO test name -> file name
