@@ -2,19 +2,16 @@
 
 from jinja2 import Template
 
-
-FILE_TEMPLATE = Template(
+MAIN_FILE_TEMPLATE = Template(
     """import os
 from base64 import b64encode
-from locust import HttpLocust, TaskSet, between, task
+from locust import HttpLocust, TaskSet, between
 
 from helpers import Helper
+{% for class_import in test_classes_imports %}{{ class_import }}
+{% endfor %}
 
-API_PREFIX = ""
-
-{{ required_vars }}
-
-class Tests(TaskSet):
+class Tests(TaskSet{% for test_class in test_classes_names %}, {{ test_class }}{% endfor %}):
 
     def on_start(self):
 {% if not security_cases %}
@@ -22,14 +19,29 @@ class Tests(TaskSet):
 {% else %}
 {{ security_cases }}
 {% endif %}
-{{ test_cases }}
+    def on_stop(self):
+        pass
 
-class WebsiteUser(HttpLocust):
+
+class TestUser(HttpLocust):
     task_set = Tests
     wait_time = between(5.0, 9.0)
-{% if host %}
     host = "{{ host }}"
-{% endif %}
+
+"""
+)
+
+
+FILE_TEMPLATE = Template(
+    """from locust import TaskSet, task
+
+from helpers import Helper
+from constants.base_constants import API_PREFIX
+{% if constants %}from constants.{{ file_name }} import {{ constants }}{% endif %}
+
+
+class {{ class_name }}(TaskSet):
+{{ test_methods }}
 """
 )
 
@@ -39,6 +51,7 @@ FUNC_TEMPLATE = Template(
     @task(1)
     def {{ func_name }}(self):
         self.client.{{ method }}(
+            name="{{ test_name }}",
             url="{api_prefix}{{ path }}".format(api_prefix=API_PREFIX{{ path_params }}),
             params={{ query_params }},
             headers={{ header_params }},
