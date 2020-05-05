@@ -28,11 +28,7 @@ def main():
         default=2,
     )
     parser.add_argument(
-        "--max-folder-depth",
-        help="max generated folders depth",
-        required=False,
-        type=int,
-        default=2,
+        "--max-folder-depth", help="max generated folders depth", required=False, type=int, default=2,
     )
     parser.add_argument(
         "--operations",

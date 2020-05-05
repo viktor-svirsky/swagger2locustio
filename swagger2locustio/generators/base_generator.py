@@ -72,7 +72,7 @@ class BaseGenerator:
                     file_name=test_class.file_name,
                     test_methods=test_methods_str,
                     class_name=test_class.class_name,
-                    constants=constants_str
+                    constants=constants_str,
                 )
             )
             if class_constants:
@@ -84,11 +84,13 @@ class BaseGenerator:
                 security_cases=security_cases,
                 host=swagger_data["host"],
                 test_classes_names=test_classes.keys(),
-                test_classes_imports=test_classes_imports
+                test_classes_imports=test_classes_imports,
             )
         )
         (self.results_path / "helpers.py").write_text(helpers_templates.HELPER_CLASS_TEMPLATE.render())
-        (self.constants_path / "base_constants.py").write_text(constants_templates.CONSTANTS_BASE_FILE_TEMPLATE.render())
+        (self.constants_path / "base_constants.py").write_text(
+            constants_templates.CONSTANTS_BASE_FILE_TEMPLATE.render()
+        )
 
     def generate_test_classes(self, paths_data: dict) -> Dict[str, TestClass]:
         """Method: generate test cases"""
@@ -104,6 +106,7 @@ class BaseGenerator:
                     logging.warning(error)
                     continue
                 import re
+
                 path_params_pattern = re.compile(r"{.*?}", re.UNICODE)
                 identifier_pattern = re.compile(r"[^\d\w/]", re.UNICODE)
                 test_name = re.sub(path_params_pattern, "", path)

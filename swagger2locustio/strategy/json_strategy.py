@@ -12,7 +12,9 @@ from swagger2locustio.parsers.json_parsers.swagger_v2 import SwaggerV2JsonParser
 class JsonStrategy(BaseStrategy):
     """Class: JSON Strategy"""
 
-    def __init__(self, file_name: Path, results_path: Path, mask: Dict[str, Set[str]], strict_level: int, max_folder_depth: int):
+    def __init__(
+        self, file_name: Path, results_path: Path, mask: Dict[str, Set[str]], strict_level: int, max_folder_depth: int
+    ):
         super().__init__(file_name, results_path, mask, strict_level, max_folder_depth)
 
     @staticmethod

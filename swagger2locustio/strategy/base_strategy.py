@@ -11,7 +11,9 @@ from swagger2locustio.generators.base_generator import BaseGenerator
 class BaseStrategy(ABC):
     """Class: Base Strategy"""
 
-    def __init__(self, file_name: Path, results_path: Path, mask: Dict[str, Set[str]], strict_level: int, max_folder_depth: int):
+    def __init__(
+        self, file_name: Path, results_path: Path, mask: Dict[str, Set[str]], strict_level: int, max_folder_depth: int
+    ):
         self.swagger_file_content = self.read_file_content(str(file_name))
         self.mask = mask
         self.generator = BaseGenerator(results_path, strict_level, max_folder_depth)
