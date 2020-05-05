@@ -11,14 +11,12 @@ class SwaggerV2YamlParser(SwaggerBaseParser):
 
     def parse_security_data(self, file_content: dict) -> dict:
         security = {}
-        # print(111, file_content)
         security_definitions = file_content.get("securityDefinitions", {})
         for security_mode, security_config in security_definitions.items():
-            print(222, security_config['type'])
-            if security_config['type'] in ("BasicAuth", "apiKey"):
+            if security_config["type"] in ("BasicAuth", "apiKey"):
                 security[security_mode] = security_config
             else:
-                raise ValueError("Security type %s is not supported" % security_config['type'])
+                raise ValueError("Security type %s is not supported" % security_config["type"])
         return security
 
     def parse_host_data(self, file_content: dict) -> str:

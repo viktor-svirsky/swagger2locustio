@@ -1,8 +1,8 @@
 """Module: YAML Strategy"""
 
-import yaml
 from pathlib import Path
 from typing import Set, Dict
+import yaml
 
 from swagger2locustio.strategy.base_strategy import BaseStrategy
 from swagger2locustio.parsers.base_parser import SwaggerBaseParser
