@@ -37,9 +37,8 @@ class TestClass:
 class BaseGenerator:
     """Class: Base Generator"""
 
-    def __init__(self, results_path: Path, strict_level: int, max_folder_depth: int):
+    def __init__(self, results_path: Path, strict_level: int):
         self.results_path = results_path
-        self.max_folder_depth = max_folder_depth
         self.constants_path = self.results_path / "constants"
         self.constants_path.mkdir(exist_ok=True, parents=True)
         self.tests_path = self.results_path / "tests"

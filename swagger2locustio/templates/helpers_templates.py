@@ -1,6 +1,5 @@
 """Module: locustfile templates"""
 
-from collections import defaultdict
 from jinja2 import Template
 
 HELPER_MAPPING = {}

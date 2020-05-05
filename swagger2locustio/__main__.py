@@ -28,9 +28,6 @@ def main():
         default=2,
     )
     parser.add_argument(
-        "--max-folder-depth", help="max generated folders depth", required=False, type=int, default=2,
-    )
-    parser.add_argument(
         "--operations",
         help="operations to use in api testing",
         required=False,
@@ -78,7 +75,7 @@ def main():
     log.debug("Mask: %s", mask)
 
     if ext == ".json":
-        swagger_strategy = JsonStrategy(swagger_file, results_path, mask, args.strict_level, args.max_folder_depth)
+        swagger_strategy = JsonStrategy(swagger_file, results_path, mask, args.strict_level)
     elif ext in (".yaml", ".yml"):
         swagger_strategy = Ellipsis
     else:
