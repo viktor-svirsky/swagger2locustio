@@ -36,6 +36,7 @@ class BaseStrategy(ABC):
 
         specific_version_parser = self.get_specific_version_parser()
         swagger_data = specific_version_parser.parse_swagger_file(self.swagger_file_content, self.mask)
+        print(swagger_data)
         code = self.generator.generate_locustfile(swagger_data)
         self.write_results_to_file(code)
 
@@ -44,3 +45,18 @@ class BaseStrategy(ABC):
 
         with open(self.results_file, "w") as file:
             file.write(content)
+
+    def get_specific_version_parser_basic(self, parser_func) -> SwaggerBaseParser:
+        """Method: get specific version parser: basic"""
+
+        swagger_version = self.swagger_file_content.get("swagger")
+        openapi_version = self.swagger_file_content.get("openapi")
+        version = swagger_version if swagger_version else openapi_version
+        if not version:
+            raise ValueError("No swagger version is specified")
+        version = int(version[0])
+        if version == 2:
+            parser = parser_func
+        else:
+            raise ValueError("There is no support for %s version of swagger" % version)
+        return parser
