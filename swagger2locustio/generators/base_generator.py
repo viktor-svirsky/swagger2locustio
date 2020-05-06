@@ -116,6 +116,8 @@ class BaseGenerator:
         class_name = class_name.title()
         class_name = class_name.replace(" ", "")
 
+        file_name += "_file"
+
         test_class = self.test_classes_mapping.get(class_name)
         if test_class is None:
             test_class = TestClass(file_path=file_path, file_name=file_name, class_name=class_name)
