@@ -8,6 +8,7 @@ AUTH_BASIC_TEMPLATE = Template(
         credentials = b64encode(auth_str.encode()).decode("utf-8")
         credentials = "Basic " + credentials
         self.client.headers.update({"Authorization": credentials})
+        
 """
 )
 
@@ -15,5 +16,6 @@ AUTH_BASIC_TEMPLATE = Template(
 AUTH_KEY_HEADER_TEMPLATE = Template(
     """
         self.client.headers.update({"{{ name }}": str(os.getenv(\"TEST_USER_API_KEY\"))})
+        
 """
 )

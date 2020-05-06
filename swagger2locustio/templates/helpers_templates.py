@@ -3,13 +3,13 @@
 from jinja2 import Template
 
 HELPER_MAPPING = {}
-HELPER_MAPPING.update(dict.fromkeys(["choice"], "Helper.get_random_choice_from_values"))
-HELPER_MAPPING.update(dict.fromkeys(["int", "integer", "int32", "int64"], "Helper.get_random_int"))
-HELPER_MAPPING.update(dict.fromkeys(["positiveint", "positive_int"], "Helper.get_random_positive_int"))
-HELPER_MAPPING.update(dict.fromkeys(["negativeint", "negative_int"], "Helper.get_random_negative_int"))
-HELPER_MAPPING.update(dict.fromkeys(["float", "double", "number"], "Helper.get_random_float"))
-HELPER_MAPPING.update(dict.fromkeys(["bool", "boolean"], "Helper.get_random_bool"))
-HELPER_MAPPING.update(dict.fromkeys(["null"], "Helper.get_null_value"))
+HELPER_MAPPING.update(dict.fromkeys(["choice"], "Helper.get_random_choice_from_values(*{values})"))
+HELPER_MAPPING.update(dict.fromkeys(["int", "integer", "int32", "int64"], "Helper.get_random_int()"))
+HELPER_MAPPING.update(dict.fromkeys(["positiveint", "positive_int"], "Helper.get_random_positive_int()"))
+HELPER_MAPPING.update(dict.fromkeys(["negativeint", "negative_int"], "Helper.get_random_negative_int()"))
+HELPER_MAPPING.update(dict.fromkeys(["float", "double", "number"], "Helper.get_random_float()"))
+HELPER_MAPPING.update(dict.fromkeys(["bool", "boolean"], "Helper.get_random_bool()"))
+HELPER_MAPPING.update(dict.fromkeys(["null"], "Helper.get_null_value()"))
 
 HELPER_CLASS_TEMPLATE = Template(
     """import datetime

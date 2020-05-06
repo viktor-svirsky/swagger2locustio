@@ -5,20 +5,17 @@ from jinja2 import Template
 MAIN_FILE_TEMPLATE = Template(
     """import os
 from base64 import b64encode
-from locust import HttpLocust, TaskSet, between
+from locust import HttpLocust, between
 
 from helpers import Helper
-{% for class_import in test_classes_imports %}{{ class_import }}
-{% endfor %}
+from testsets.generated_testset import GeneratedTestSet
 
-class Tests(TaskSet{% for test_class in test_classes_names %}, {{ test_class }}{% endfor %}):
 
-    def on_start(self):
-{% if not security_cases %}
-        pass
-{% else %}
-{{ security_cases }}
-{% endif %}
+class Tests(GeneratedTestSet):
+
+    def on_start(self):{% if not security_cases %}
+        pass{% else %}
+{{ security_cases }}{% endif %}
     def on_stop(self):
         pass
 
@@ -31,8 +28,21 @@ class TestUser(HttpLocust):
 """
 )
 
+GENERATED_TASKSET_FILE_TEMPLATE = Template(
+    """from locust import TaskSet
 
-FILE_TEMPLATE = Template(
+from helpers import Helper
+from constants.base_constants import API_PREFIX
+{% for class_import in test_classes_imports %}{{ class_import }}
+{% endfor %}
+
+class GeneratedTestSet(TaskSet{% for test_class in test_classes_names %}, {{ test_class }}{% endfor %}):
+    pass
+
+"""
+)
+
+TEST_CLASS_FILE_TEMPLATE = Template(
     """from locust import TaskSet, task
 
 from helpers import Helper
