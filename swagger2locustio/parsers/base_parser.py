@@ -30,11 +30,9 @@ class SwaggerBaseParser(ABC):
 
         security = {}
         security_definitions = file_content.get("securityDefinitions", {})
-        for security_mode, security_config in security_definitions.items():
-            if security_config["type"] in ("BasicAuth", "apiKey"):
-                security[security_mode] = security_config
-            else:
-                raise ValueError("Security type %s is not supported" % security_config["type"])
+        for security_config in security_definitions.values():
+            security_type = security_config.get("type", "")
+            security[security_type] = security_config
         return security
 
     def parse_paths_data(self, file_content: dict, mask: Dict[str, Set[str]]) -> dict:
