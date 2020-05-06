@@ -14,8 +14,8 @@ from testsets.generated_testset import GeneratedTestSet
 class Tests(GeneratedTestSet):
 
     def on_start(self):{% if not security_cases %}
-        pass{% else %}
-{{ security_cases }}{% endif %}
+        pass{% else %}{{ security_cases }}{% endif %}
+
     def on_stop(self):
         pass
 

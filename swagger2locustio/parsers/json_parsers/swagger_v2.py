@@ -12,12 +12,9 @@ class SwaggerV2JsonParser(SwaggerBaseParser):
     def parse_security_data(self, file_content: dict) -> dict:
         security = {}
         security_definitions = file_content.get("securityDefinitions", {})
-        for security_name, security_config in security_definitions.items():
+        for security_config in security_definitions.values():
             security_type = security_config.get("type", "")
-            if security_type in ("basic", "apiKey"):
-                security[security_type] = security_config
-            else:
-                raise ValueError("Security type %s is not supported" % security_type)
+            security[security_type] = security_config
         return security
 
     def parse_host_data(self, file_content: dict) -> str:

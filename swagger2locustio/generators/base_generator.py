@@ -211,12 +211,16 @@ class BaseGenerator:
         security_cases = []
         for security_type, security_config in security_data.items():
             if security_type == "basic":
-                security_cases.append(auth_templates.AUTH_BASIC.render())
+                security_cases.append(auth_templates.AUTH_BASIC.render(security_config=security_config))
             elif security_type == "apiKey":
                 location = security_config.get("in")
                 name = security_config.get("name")
                 if location.lower() == "header" and name:
-                    security_cases.append(auth_templates.AUTH_KEY_HEADER.render(name=name))
+                    security_cases.append(
+                        auth_templates.AUTH_KEY_HEADER.render(name=name, security_config=security_config)
+                    )
                 else:
                     raise ValueError(security_config)
+            else:
+                security_cases.append(auth_templates.AUTH_UNDEFINED.render(security_config=security_config))
         return "".join(security_cases)
