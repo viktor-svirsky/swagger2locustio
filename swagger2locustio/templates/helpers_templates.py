@@ -11,7 +11,7 @@ HELPER_MAPPING.update(dict.fromkeys(["float", "double", "number"], "Helper.get_r
 HELPER_MAPPING.update(dict.fromkeys(["bool", "boolean"], "Helper.get_random_bool()"))
 HELPER_MAPPING.update(dict.fromkeys(["null"], "Helper.get_null_value()"))
 
-HELPER_CLASS_TEMPLATE = Template(
+HELPER_CLASS = Template(
     """import datetime
 import random
 import string

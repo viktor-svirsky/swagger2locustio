@@ -2,7 +2,7 @@
 
 from jinja2 import Template
 
-MAIN_FILE_TEMPLATE = Template(
+MAIN_LOCUSTFILE = Template(
     """import os
 from base64 import b64encode
 from locust import HttpLocust, between
@@ -28,7 +28,7 @@ class TestUser(HttpLocust):
 """
 )
 
-GENERATED_TASKSET_FILE_TEMPLATE = Template(
+GENERATED_TESTSET_FILE = Template(
     """from locust import TaskSet
 
 from helpers import Helper
@@ -42,7 +42,7 @@ class GeneratedTestSet(TaskSet{% for test_class in test_classes_names %}, {{ tes
 """
 )
 
-TEST_CLASS_FILE_TEMPLATE = Template(
+TEST_CLASS_FILE = Template(
     """from locust import TaskSet, task
 
 from helpers import Helper
@@ -56,7 +56,7 @@ class {{ class_name }}(TaskSet):
 )
 
 
-FUNC_TEMPLATE = Template(
+FUNC = Template(
     """
     @task(1)
     def {{ func_name }}(self):
@@ -71,5 +71,5 @@ FUNC_TEMPLATE = Template(
 """
 )
 
-PATH_PARAM_PAIR_TEMPLATE = Template("{{ key }}={{ val }}")
-DICT_PARAM_PAIR_TEMPLATE = Template('"{{ key }}": {{ val }}')
+PATH_PARAM_PAIR = Template("{{ key }}={{ val }}")
+DICT_PARAM_PAIR = Template('"{{ key }}": {{ val }}')
