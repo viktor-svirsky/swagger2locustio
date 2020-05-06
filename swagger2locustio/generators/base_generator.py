@@ -20,6 +20,7 @@ IDENTIFIER_PATTERN = re.compile(r"[^\d\w/]", re.UNICODE)
 @dataclass(frozen=True)
 class Constant:
     """Data Class: Constant"""
+
     name: str
     val: Any
     value_type: str
@@ -28,6 +29,7 @@ class Constant:
 @dataclass
 class TestMethod:
     """Data Class: Test Method"""
+
     method_data: str
     constants: List[Constant] = field(default_factory=lambda: [])
 
@@ -35,6 +37,7 @@ class TestMethod:
 @dataclass
 class TestClass:
     """Data Class: Test Class"""
+
     file_path: Path
     file_name: str
     class_name: str
