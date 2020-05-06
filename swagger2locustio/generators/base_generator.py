@@ -6,7 +6,7 @@ from dataclasses import dataclass, field
 from pathlib import Path
 from typing import List, Dict, Union, Any
 
-from swagger2locustio.templates import locustfile_templates
+from swagger2locustio.templates import locustfile_templates as l_templates
 from swagger2locustio.templates import helpers_templates
 from swagger2locustio.templates import auth_templates
 from swagger2locustio.templates import constants_templates
@@ -31,7 +31,7 @@ class TestMethod:
     """Data Class: Test Method"""
 
     method_data: str
-    constants: List[Constant] = field(default_factory=lambda: [])
+    constants: List[Constant]
 
 
 @dataclass
@@ -48,115 +48,111 @@ class BaseGenerator:
     """Class: Base Generator"""
 
     def __init__(self, results_path: Path, strict_level: int):
-        self.results_path = results_path
-        self.constants_path = self.results_path / "constants"
-        self.constants_path.mkdir(exist_ok=True, parents=True)
-        self.tests_path = self.results_path / "tests"
-        self.tests_path.mkdir(exist_ok=True, parents=True)
         self.strict_level = strict_level
+        self.test_classes_mapping: Dict[str, TestClass] = {}
+        self.results_path = results_path
+        self.constants_path = Path("constants")
+        self.test_sets_path = Path("testsets")
+        self.tests_path = self.test_sets_path / "generated_tests"
+
+        (self.results_path / self.constants_path).mkdir(exist_ok=True, parents=True)
+        (self.results_path / self.tests_path).mkdir(exist_ok=True, parents=True)
 
     def generate_locustfiles(self, swagger_data: dict) -> None:
-        """Method: generate locustfiles structure"""
+        """Method: generate locustfiles"""
 
-        test_classes = self.generate_test_classes(swagger_data["paths"])
-        security_data = swagger_data["security"]
-        security_cases = ""
-        if security_data:
-            security_cases = self.generate_security_cases(security_data)
+        self.generate_test_classes(swagger_data["paths"])
+        security_cases = self.generate_security_cases(swagger_data["security"])
         test_classes_imports = []
-        for test_class in test_classes.values():
-            test_methods = []
+        for test_class in self.test_classes_mapping.values():
+            class_methods = []
             class_constants = set()
             for test_method in test_class.test_methods:
-                test_methods.append(test_method.method_data)
+                class_methods.append(test_method.method_data)
                 class_constants.update(test_method.constants)
-            test_methods_str = "".join(test_methods)
-            test_class_path = self.tests_path / test_class.file_path
-            test_class_path.mkdir(parents=True, exist_ok=True)
+            methods_str = "".join(class_methods)
+            class_file_path = self.results_path / self.tests_path / test_class.file_path
+            class_file_path.mkdir(parents=True, exist_ok=True)
             file_name = f"{test_class.file_name}.py"
             constants_str = ", ".join([constant.name for constant in class_constants])
-            import_path = str("tests" / test_class.file_path / test_class.file_name).replace("/", ".")
+            import_path = str(self.tests_path / test_class.file_path / test_class.file_name).replace("/", ".")
             test_classes_imports.append(f"from {import_path} import {test_class.class_name}")
-            (test_class_path / file_name).write_text(
-                locustfile_templates.FILE_TEMPLATE.render(
+            (class_file_path / file_name).write_text(
+                l_templates.TEST_CLASS_FILE.render(
                     file_name=test_class.file_name,
-                    test_methods=test_methods_str,
+                    test_methods=methods_str,
                     class_name=test_class.class_name,
                     constants=constants_str,
                 )
             )
             if class_constants:
-                (self.constants_path / file_name).write_text(
-                    constants_templates.CONSTANTS_FILE_TEMPLATE.render(constants=class_constants)
+                (self.results_path / self.constants_path / file_name).write_text(
+                    constants_templates.CONSTANTS_FILE.render(constants=class_constants)
                 )
         (self.results_path / "locustfile.py").write_text(
-            locustfile_templates.MAIN_FILE_TEMPLATE.render(
-                security_cases=security_cases,
-                host=swagger_data["host"],
-                test_classes_names=test_classes.keys(),
-                test_classes_imports=test_classes_imports,
+            l_templates.MAIN_LOCUSTFILE.render(security_cases=security_cases, host=swagger_data["host"],)
+        )
+        (self.results_path / self.test_sets_path / "generated_testset.py").write_text(
+            l_templates.GENERATED_TESTSET_FILE.render(
+                test_classes_names=self.test_classes_mapping.keys(), test_classes_imports=test_classes_imports,
             )
         )
-        (self.results_path / "helpers.py").write_text(helpers_templates.HELPER_CLASS_TEMPLATE.render())
-        (self.constants_path / "base_constants.py").write_text(
-            constants_templates.CONSTANTS_BASE_FILE_TEMPLATE.render()
+        (self.results_path / "helpers.py").write_text(helpers_templates.HELPER_CLASS.render())
+        (self.results_path / self.constants_path / "base_constants.py").write_text(
+            constants_templates.CONSTANTS_BASE_FILE.render()
         )
 
-    def generate_test_classes(self, paths_data: dict) -> Dict[str, TestClass]:
+    def _get_or_create_test_class(self, ulr_path: str) -> TestClass:
+        file_path_str = re.sub(PATH_PARAMS_PATTERN, "", ulr_path)
+        file_path_str = file_path_str.strip("/")
+        file_path_str = re.sub(IDENTIFIER_PATTERN, "_", file_path_str)
+        file_path_list = file_path_str.split("/")
+        file_name = file_path_list[-1]
+        file_path = Path(*file_path_list[:-1])
+        if not file_name.isidentifier():
+            file_name = "test_" + file_name
+
+        class_name = file_name.replace("_", " ")
+        class_name = class_name.title()
+        class_name = class_name.replace(" ", "")
+
+        test_class = self.test_classes_mapping.get(class_name)
+        if test_class is None:
+            test_class = TestClass(file_path=file_path, file_name=file_name, class_name=class_name)
+            self.test_classes_mapping[class_name] = test_class
+        return test_class
+
+    def generate_test_classes(self, paths_data: dict) -> None:
         """Method: generate test cases"""
 
-        test_classes_mapping: Dict[str, TestClass] = {}
-        for path, methods_data in paths_data.items():
-            test_count = 0
+        for ulr_path, methods_data in paths_data.items():
+            test_method_count = 0
+            test_class = self._get_or_create_test_class(ulr_path)
+
             for method, method_data in methods_data.items():
                 # responses_data = method_data.get("responses", {})
+                constants: List[Constant] = []
                 try:
-                    params = self.extract_params(method_data.get("params", {}))
+                    params = self.extract_params(method_data.get("params", {}), constants)
                 except ValueError as error:
                     logging.warning(error)
                     continue
-
-                test_name = re.sub(PATH_PARAMS_PATTERN, "", path)
-
-                file_path = test_name.strip("/")
-                file_path = re.sub(IDENTIFIER_PATTERN, "_", file_path)
-                file_path = file_path.split("/")
-
-                file_name = file_path[-1]
-                file_path = Path(*file_path[:-1])
-
-                class_name = file_name.replace("_", " ")
-                class_name = class_name.title()
-                class_name = class_name.replace(" ", "")
-                if not class_name.isidentifier():
-                    class_name = "Test_" + class_name
-
-                constants: List[Constant] = []
-                test_method_data = locustfile_templates.FUNC_TEMPLATE.render(
-                    func_name=f"{file_name}_test_{test_count}",
+                test_name = re.sub(PATH_PARAMS_PATTERN, "", ulr_path)
+                test_method_data = l_templates.FUNC.render(
+                    func_name=f"{test_class.file_name}_test_{test_method_count}",
                     method=method,
-                    path=path,
-                    # TODO test name -> file name
+                    path=ulr_path,
                     test_name=test_name,
-                    path_params=self._format_params(params["path_params"], "path", constants),
-                    query_params=self._format_params(params["query_params"], "query", constants),
-                    header_params=self._format_params(params["header_params"], "header", constants),
-                    cookie_params=self._format_params(params["cookie_params"], "cookie", constants),
+                    path_params=params["path_params"],
+                    query_params=params["query_params"],
+                    header_params=params["header_params"],
+                    cookie_params=params["cookie_params"],
                 )
-                test_method = TestMethod(method_data=test_method_data)
-                test_method.constants += constants
-                test_class = test_classes_mapping.get(class_name)
-                if test_class is None:
-                    test_class = TestClass(file_path=file_path, file_name=file_name, class_name=class_name)
-                    test_classes_mapping[class_name] = test_class
-                test_class.test_methods.append(test_method)
-                test_count += 1
-        return test_classes_mapping
+                test_class.test_methods.append(TestMethod(method_data=test_method_data, constants=constants))
+                test_method_count += 1
 
-    @staticmethod
-    def extract_params(params: dict) -> Dict[str, list]:
+    def extract_params(self, params: dict, constants: List[Constant]) -> Dict[str, Union[str, dict]]:
         """Method: extract params"""
-
         path_params: List[dict] = []
         query_params: List[dict] = []
         header_params: List[dict] = []
@@ -176,10 +172,10 @@ class BaseGenerator:
             target_params.append(param_config)
 
         extracted_params = {
-            "path_params": path_params,
-            "query_params": query_params,
-            "header_params": header_params,
-            "cookie_params": cookie_params,
+            "path_params": self._format_params(path_params, "path", constants),
+            "query_params": self._format_params(query_params, "query", constants),
+            "header_params": self._format_params(header_params, "header", constants),
+            "cookie_params": self._format_params(cookie_params, "cookie", constants),
         }
         return extracted_params
 
@@ -187,30 +183,26 @@ class BaseGenerator:
     def _format_params(raw_params: List[dict], param_type, constants) -> Union[str, dict]:
         params = []
         for param in raw_params:
-            name = param.get("name", "")
-            const_name = name.upper()
-            val = param.get("default")
-            param_value_type = param.get("type", "")
-            if val is None:
-                const_val = helpers_templates.HELPER_MAPPING.get(param_value_type, "") + "()"
-            else:
-                const_val = repr(val)
-            choice_helper = helpers_templates.HELPER_MAPPING["choice"]
-            val = choice_helper + "(*" + const_name + ")"
-            const = Constant(name=const_name, val=const_val, value_type=param_value_type)
-            constants.append(const)
+            param_name = param.get("name", "")
+            const_name = param_name.upper()
+            param_val = param.get("default")
+            param_val_type = param.get("type", "")
+            const_val = repr(param_val)
+            if param_val is None:
+                const_val = helpers_templates.HELPER_MAPPING.get(param_val_type, "")
+            param_val = helpers_templates.HELPER_MAPPING["choice"].format(values=const_name)
+            constants.append(Constant(name=const_name, val=const_val, value_type=param_val_type))
             if param_type == "path":
-                params.append(locustfile_templates.PATH_PARAM_PAIR_TEMPLATE.render(key=name, val=val))
+                params.append(l_templates.PATH_PARAM_PAIR.render(key=param_name, val=param_val))
             else:
-                params.append(locustfile_templates.DICT_PARAM_PAIR_TEMPLATE.render(key=name, val=val))
-        formatted_params = ""
+                params.append(l_templates.DICT_PARAM_PAIR.render(key=param_name, val=param_val))
         if param_type == "path":
+            formatted_params = ""
             if params:
                 formatted_params = ", " + ", ".join(params)
         else:
-            if not params:
-                formatted_params = "{}"
-            else:
+            formatted_params = "{}"
+            if params:
                 formatted_params = "{" + ", ".join(params) + "}"
         return formatted_params
 
@@ -220,13 +212,14 @@ class BaseGenerator:
 
         security_cases = []
         for security_type, security_config in security_data.items():
+            # TODO change security type
             if security_type == "BasicAuth":
-                security_cases.append(auth_templates.AUTH_BASIC_TEMPLATE.render())
+                security_cases.append(auth_templates.AUTH_BASIC.render())
             elif security_type == "apiKey":
                 location = security_config.get("in")
                 name = security_config.get("name")
                 if location.lower() == "header" and name:
-                    security_cases.append(auth_templates.AUTH_KEY_HEADER_TEMPLATE.render(name=name))
+                    security_cases.append(auth_templates.AUTH_KEY_HEADER.render(name=name))
                 else:
                     raise ValueError(security_config)
         return "".join(security_cases)
