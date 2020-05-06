@@ -126,20 +126,19 @@ class BaseGenerator:
         """Method: generate test cases"""
 
         for ulr_path, methods_data in paths_data.items():
-            test_method_count = 0
             test_class = self._get_or_create_test_class(ulr_path)
 
             for method, method_data in methods_data.items():
                 # responses_data = method_data.get("responses", {})
                 constants: List[Constant] = []
                 try:
-                    params = self.extract_params(method_data.get("params", {}), constants)
+                    params = self.extract_params(method_data.get("params", {}), constants, len(test_class.test_methods))
                 except ValueError as error:
                     logging.warning(error)
                     continue
                 test_name = re.sub(PATH_PARAMS_PATTERN, "", ulr_path)
                 test_method_data = l_templates.FUNC.render(
-                    func_name=f"{test_class.file_name}_test_{test_method_count}",
+                    func_name=f"{test_class.file_name}_test_{len(test_class.test_methods)}",
                     method=method,
                     path=ulr_path,
                     test_name=test_name,
@@ -149,9 +148,8 @@ class BaseGenerator:
                     cookie_params=params["cookie_params"],
                 )
                 test_class.test_methods.append(TestMethod(method_data=test_method_data, constants=constants))
-                test_method_count += 1
 
-    def extract_params(self, params: dict, constants: List[Constant]) -> Dict[str, Union[str, dict]]:
+    def extract_params(self, params: dict, constants: List[Constant], method_num: int) -> Dict[str, Union[str, dict]]:
         """Method: extract params"""
         path_params: List[dict] = []
         query_params: List[dict] = []
@@ -172,19 +170,19 @@ class BaseGenerator:
             target_params.append(param_config)
 
         extracted_params = {
-            "path_params": self._format_params(path_params, "path", constants),
-            "query_params": self._format_params(query_params, "query", constants),
-            "header_params": self._format_params(header_params, "header", constants),
-            "cookie_params": self._format_params(cookie_params, "cookie", constants),
+            "path_params": self._format_params(path_params, "path", constants, method_num),
+            "query_params": self._format_params(query_params, "query", constants, method_num),
+            "header_params": self._format_params(header_params, "header", constants, method_num),
+            "cookie_params": self._format_params(cookie_params, "cookie", constants, method_num),
         }
         return extracted_params
 
     @staticmethod
-    def _format_params(raw_params: List[dict], param_type, constants) -> Union[str, dict]:
+    def _format_params(raw_params: List[dict], param_type, constants, method_num: int) -> Union[str, dict]:
         params = []
         for param in raw_params:
             param_name = param.get("name", "")
-            const_name = param_name.upper()
+            const_name = param_name.upper() + f"__{method_num}"
             param_val = param.get("default")
             param_val_type = param.get("type", "")
             const_val = repr(param_val)
@@ -212,8 +210,7 @@ class BaseGenerator:
 
         security_cases = []
         for security_type, security_config in security_data.items():
-            # TODO change security type
-            if security_type == "BasicAuth":
+            if security_type == "basic":
                 security_cases.append(auth_templates.AUTH_BASIC.render())
             elif security_type == "apiKey":
                 location = security_config.get("in")
