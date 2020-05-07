@@ -65,6 +65,9 @@ class BaseGenerator:
         security_cases = self.generate_security_cases(swagger_data["security"])
         test_classes_imports = []
         for test_class in self.test_classes_mapping.values():
+            methods_count = len(test_class.test_methods)
+            if not methods_count:
+                continue
             class_methods = []
             class_constants = set()
             for test_method in test_class.test_methods:
