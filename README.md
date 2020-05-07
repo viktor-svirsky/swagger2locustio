@@ -26,7 +26,7 @@
         <img src="" />
     </a-->
     <a href="https://github.com/vsvirsky/swagger2locustio" alt="Github actions">
-        <img src="https://github.com/vsvirsky/swagger2locustio/.github/workflows/pythonpackage.yml/badge.svg" />
+        <img src="https://github.com/vsvirsky/swagger2locustio/workflows/Python package/badge.svg" />
     </a>
     <a href="https://github.com/pre-commit/pre-commit" alt="pre-commit">
         <img src="https://img.shields.io/badge/pre--commit-enabled-brightgreen?logo=pre-commit&logoColor=white" />
