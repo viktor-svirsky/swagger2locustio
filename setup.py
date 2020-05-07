@@ -32,6 +32,8 @@ setup(
     include_package_data=True,
     install_requires=[
         "Jinja2==2.11.1",
+        "PyYAML==5.3.1",
+        "coloredlogs==14.0"
     ],
     entry_points={
         "console_scripts": [

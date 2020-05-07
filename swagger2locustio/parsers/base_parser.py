@@ -1,7 +1,6 @@
 """Module: Base Parser"""
 
-from abc import ABC
-from copy import deepcopy
+from abc import ABC, abstractmethod
 from typing import Set, Dict
 
 
@@ -66,14 +65,6 @@ class SwaggerBaseParser(ABC):
         return api_paths
 
     @staticmethod
+    @abstractmethod
     def _parse_params(params: dict) -> dict:
-        param_data = {}
-        for param in params:
-            param_name = param.get("name")
-            # if not param_name or not param.get("default") or not param.get("in"):
-            if not param_name or not param.get("in"):
-                if param.get("required"):
-                    raise ValueError("Not full info about required param")
-                continue
-            param_data[param_name] = deepcopy(param)
-        return param_data
+        raise NotImplementedError()

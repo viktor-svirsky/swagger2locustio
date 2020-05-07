@@ -1,12 +1,13 @@
 """Module: This is main module that actvates library"""
 
+import json
 import argparse
 import logging
 from pathlib import Path
 
+import yaml
 from swagger2locustio import settings
-from swagger2locustio.strategy.json_strategy import JsonStrategy
-from swagger2locustio.strategy.yaml_strategy import YamlStrategy
+from swagger2locustio.strategy.base_strategy import BaseStrategy
 
 
 def main():
@@ -53,7 +54,6 @@ def main():
     log = logging.getLogger(__name__)
     log.debug("Command line args: %s", args)
     swagger_file = args.swagger_file
-    results_path = args.results_path
     ext = swagger_file.suffix
     operations = args.operations
     paths = [path.lower() for path in args.paths_white]
@@ -76,11 +76,14 @@ def main():
     log.debug("Mask: %s", mask)
 
     if ext == ".json":
-        swagger_strategy = JsonStrategy(swagger_file, results_path, mask, args.strict_level)
+        with open(swagger_file) as file:
+            swagger_data = json.load(file)
     elif ext in (".yaml", ".yml"):
-        swagger_strategy = YamlStrategy(swagger_file, results_path, mask, args.strict_level)
+        with open(swagger_file) as file:
+            swagger_data = yaml.safe_load(file)
     else:
         raise ValueError("Incorrect file format")
+    swagger_strategy = BaseStrategy(swagger_data, args.results_path, mask, args.strict_level)
     log.debug("Strategy: %s", swagger_strategy)
     try:
         swagger_strategy.process()
