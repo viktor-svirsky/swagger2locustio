@@ -36,7 +36,7 @@ from constants.base_constants import API_PREFIX
 {% for class_import in test_classes_imports %}{{ class_import }}
 {% endfor %}
 
-class GeneratedTestSet(TaskSet{% for test_class in test_classes_names %}, {{ test_class }}{% endfor %}):
+class GeneratedTestSet({% for test_class in test_classes_names %}{{ test_class }}, {% endfor %}TaskSet):
     pass
 
 """
