@@ -64,6 +64,7 @@ class BaseGenerator:
         self.generate_test_classes(swagger_data["paths"])
         security_cases = self.generate_security_cases(swagger_data["security"])
         test_classes_imports = []
+        test_classes_inheritance = []
         for test_class in self.test_classes_mapping.values():
             methods_count = len(test_class.test_methods)
             if not methods_count:
@@ -80,6 +81,7 @@ class BaseGenerator:
             constants_str = ", ".join([constant.name for constant in class_constants])
             import_path = str(self.tests_path / test_class.file_path / test_class.file_name).replace("/", ".")
             test_classes_imports.append(f"from {import_path} import {test_class.class_name}")
+            test_classes_inheritance.append(test_class.class_name)
             (class_file_path / file_name).write_text(
                 l_templates.TEST_CLASS_FILE.render(
                     file_name=test_class.file_name,
@@ -97,7 +99,7 @@ class BaseGenerator:
         )
         (self.results_path / self.test_sets_path / "generated_testset.py").write_text(
             l_templates.GENERATED_TESTSET_FILE.render(
-                test_classes_names=self.test_classes_mapping.keys(), test_classes_imports=test_classes_imports,
+                test_classes_names=test_classes_inheritance, test_classes_imports=test_classes_imports,
             )
         )
         (self.results_path / "helpers.py").write_text(helpers_templates.HELPER_CLASS.render())
