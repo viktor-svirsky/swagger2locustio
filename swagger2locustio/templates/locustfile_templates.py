@@ -1,42 +1,67 @@
-"""Module: Swagger Base Parser"""
+"""Module: locustfile templates"""
 
 from jinja2 import Template
 
-
-FILE_TEMPLATE = Template(
+MAIN_LOCUSTFILE = Template(
     """import os
 from base64 import b64encode
-from locust import HttpLocust, TaskSet, between, task
+from locust import HttpLocust, between
 
-API_PREFIX = ""
+from helpers import Helper
+from testsets.generated_testset import GeneratedTestSet
 
-{{ required_vars }}
 
-class Tests(TaskSet):
+class Tests(GeneratedTestSet):
 
-    def on_start(self):
-{% if not security_cases %}
+    def on_start(self):{% if not security_cases %}
+        pass{% else %}{{ security_cases }}{% endif %}
+
+    def on_stop(self):
         pass
-{% else %}
-{{ security_cases }}
-{% endif %}
-{{ test_cases }}
 
-class WebsiteUser(HttpLocust):
+
+class TestUser(HttpLocust):
     task_set = Tests
     wait_time = between(5.0, 9.0)
-{% if host %}
     host = "{{ host }}"
-{% endif %}
+
+"""
+)
+
+GENERATED_TESTSET_FILE = Template(
+    """from locust import TaskSet
+
+from helpers import Helper
+from constants.base_constants import API_PREFIX
+{% for class_import in test_classes_imports %}{{ class_import }}
+{% endfor %}
+
+class GeneratedTestSet({% for test_class in test_classes_names %}{{ test_class }}, {% endfor %}TaskSet):
+    pass
+
+"""
+)
+
+TEST_CLASS_FILE = Template(
+    """from locust import TaskSet, task
+
+from helpers import Helper
+from constants.base_constants import API_PREFIX
+{% if constants %}from constants.{{ file_name }} import {{ constants }}{% endif %}
+
+
+class {{ class_name }}(TaskSet):
+{{ test_methods }}
 """
 )
 
 
-FUNC_TEMPLATE = Template(
+FUNC = Template(
     """
     @task(1)
     def {{ func_name }}(self):
         self.client.{{ method }}(
+            name="{{ test_name }}",
             url="{api_prefix}{{ path }}".format(api_prefix=API_PREFIX{{ path_params }}),
             params={{ query_params }},
             headers={{ header_params }},
@@ -46,22 +71,5 @@ FUNC_TEMPLATE = Template(
 """
 )
 
-
-AUTH_BASIC_TEMPLATE = Template(
-    """
-        auth_str = str(os.getenv(\"TEST_USER_LOGIN\")) + ":" + str(os.getenv(\"TEST_USER_PASSWORD\"))
-        credentials = b64encode(auth_str.encode()).decode("utf-8")
-        credentials = "Basic " + credentials
-        self.client.headers.update({"Authorization": credentials})
-"""
-)
-
-
-AUTH_KEY_HEADER_TEMPLATE = Template(
-    """
-        self.client.headers.update({"{{ name }}": str(os.getenv(\"TEST_USER_API_KEY\"))})
-"""
-)
-
-PATH_PARAM_PAIR_TEMPLATE = Template("{{ key }}={{ val }}")
-DICT_PARAM_PAIR_TEMPLATE = Template('"{{ key }}": {{ val }}')
+PATH_PARAM_PAIR = Template("{{ key }}={{ val }}")
+DICT_PARAM_PAIR = Template('"{{ key }}": {{ val }}')

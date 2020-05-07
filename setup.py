@@ -22,7 +22,6 @@ setup(
     keywords="",
     classifiers=[
         "Development Status :: 3 - Alpha",
-        "Programming Language :: Python :: 3.6",
         "Programming Language :: Python :: 3.7",
         "Programming Language :: Python :: 3.8",
         "License :: OSI Approved :: MIT License",
@@ -33,6 +32,8 @@ setup(
     include_package_data=True,
     install_requires=[
         "Jinja2==2.11.1",
+        "PyYAML==5.3.1",
+        "coloredlogs==14.0"
     ],
     entry_points={
         "console_scripts": [
