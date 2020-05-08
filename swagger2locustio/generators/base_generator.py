@@ -52,8 +52,8 @@ class BaseGenerator:
         self.test_classes_mapping: Dict[str, TestClass] = {}
         self.results_path = results_path
         self.constants_path = Path("constants")
-        self.test_sets_path = Path("testsets")
-        self.tests_path = self.test_sets_path / "generated_tests"
+        self.task_sets_path = Path("tasksets")
+        self.tests_path = self.task_sets_path / "generated_tests"
 
         (self.results_path / self.constants_path).mkdir(exist_ok=True, parents=True)
         (self.results_path / self.tests_path).mkdir(exist_ok=True, parents=True)
@@ -94,18 +94,20 @@ class BaseGenerator:
                 (self.results_path / self.constants_path / file_name).write_text(
                     constants_templates.CONSTANTS_FILE.render(constants=class_constants)
                 )
-        (self.results_path / "locustfile.py").write_text(
-            l_templates.MAIN_LOCUSTFILE.render(security_cases=security_cases, host=swagger_data["host"],)
+        (self.results_path / "locustfile.py").write_text(l_templates.MAIN_LOCUSTFILE.render(host=swagger_data["host"],))
+        (self.results_path / self.task_sets_path / "base.py").write_text(
+            l_templates.BASE_TASKSET_FILE.render(security_cases=security_cases,)
         )
-        (self.results_path / self.test_sets_path / "generated_testset.py").write_text(
-            l_templates.GENERATED_TESTSET_FILE.render(
+        (self.results_path / self.task_sets_path / "generated_taskset.py").write_text(
+            l_templates.GENERATED_TASKSET_FILE.render(
                 test_classes_names=test_classes_inheritance, test_classes_imports=test_classes_imports,
             )
         )
-        (self.results_path / "helpers.py").write_text(helpers_templates.HELPER_CLASS.render())
+        (self.results_path / self.task_sets_path / "helper.py").write_text(helpers_templates.HELPER_CLASS.render())
         (self.results_path / self.constants_path / "base_constants.py").write_text(
             constants_templates.CONSTANTS_BASE_FILE.render()
         )
+        LOG.info("%s test methods were created successfully", len(test_classes_inheritance))
 
     def _get_or_create_test_class(self, ulr_path: str) -> TestClass:
         file_path_str = re.sub(PATH_PARAMS_PATTERN, "", ulr_path)
@@ -116,12 +118,10 @@ class BaseGenerator:
         file_path = Path(*file_path_list[:-1])
         if not file_name.isidentifier():
             file_name = "test_" + file_name
-
-        class_name = file_name.replace("_", " ")
-        class_name = class_name.title()
-        class_name = class_name.replace(" ", "")
-
-        file_name += "_file"
+        file_name = file_name.replace("_", " ")
+        file_name = file_name.title()
+        class_name = file_name.replace(" ", "")
+        file_name = file_name.replace(" ", "_")
 
         test_class = self.test_classes_mapping.get(class_name)
         if test_class is None:
@@ -143,12 +143,10 @@ class BaseGenerator:
                 except ValueError as error:
                     logging.warning(error)
                     continue
-                test_name = re.sub(PATH_PARAMS_PATTERN, "", ulr_path)
                 test_method_data = l_templates.FUNC.render(
-                    func_name=f"{test_class.file_name}_test_{len(test_class.test_methods)}",
+                    func_name=f"{test_class.file_name.lower()}_test_{len(test_class.test_methods)}",
                     method=method,
                     path=ulr_path,
-                    test_name=test_name,
                     path_params=params["path_params"],
                     query_params=params["query_params"],
                     header_params=params["header_params"],

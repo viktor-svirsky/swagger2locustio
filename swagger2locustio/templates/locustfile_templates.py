@@ -3,49 +3,72 @@
 from jinja2 import Template
 
 MAIN_LOCUSTFILE = Template(
-    """import os
-from base64 import b64encode
-from locust import HttpLocust, between
+    """from locust import HttpLocust, between
 
-from helpers import Helper
-from testsets.generated_testset import GeneratedTestSet
-
-
-class Tests(GeneratedTestSet):
-
-    def on_start(self):{% if not security_cases %}
-        pass{% else %}{{ security_cases }}{% endif %}
-
-    def on_stop(self):
-        pass
+from tasksets.generated_taskset import GeneratedTaskSet
 
 
 class TestUser(HttpLocust):
-    task_set = Tests
+    task_set = GeneratedTaskSet
     wait_time = between(5.0, 9.0)
     host = "{{ host }}"
 
 """
 )
 
-GENERATED_TESTSET_FILE = Template(
-    """from locust import TaskSet
+BASE_TASKSET_FILE = Template(
+    """import os
+from base64 import b64encode
+from locust import TaskSet as LocustTaskSet
 
-from helpers import Helper
+from tasksets.helper import Helper
+
+
+class TaskSet(LocustTaskSet):
+
+    def on_start(self):
+        self.login()
+
+    def on_stop(self):
+        pass
+
+    def login(self):{% if not security_cases %}
+        pass{% else %}{{ security_cases }}{% endif %}
+
+    def url(self, _url: str, **kwargs):
+        return _url.format(**kwargs)
+
+    def get_generic_name(self, file):
+        return (
+            "-".join(os.path.realpath(file).split("/")[-3:])
+            .replace("_", "-")
+            .replace(".py", "")
+        )
+
+"""
+)
+
+GENERATED_TASKSET_FILE = Template(
+    """from tasksets.base import TaskSet
+from tasksets.helper import Helper
 from constants.base_constants import API_PREFIX
 {% for class_import in test_classes_imports %}{{ class_import }}
 {% endfor %}
 
-class GeneratedTestSet({% for test_class in test_classes_names %}{{ test_class }}, {% endfor %}TaskSet):
+class GeneratedTaskSet(
+    {% for test_class in test_classes_names %}{{ test_class }},
+    {% endfor %}TaskSet
+):
     pass
 
 """
 )
 
 TEST_CLASS_FILE = Template(
-    """from locust import TaskSet, task
+    """from locust import task
 
-from helpers import Helper
+from tasksets.base import TaskSet
+from tasksets.helper import Helper
 from constants.base_constants import API_PREFIX
 {% if constants %}from constants.{{ file_name }} import {{ constants }}{% endif %}
 
@@ -61,8 +84,8 @@ FUNC = Template(
     @task(1)
     def {{ func_name }}(self):
         self.client.{{ method }}(
-            name="{{ test_name }}",
-            url="{api_prefix}{{ path }}".format(api_prefix=API_PREFIX{{ path_params }}),
+            name=self.get_generic_name(__file__),
+            url=self.url("{api_prefix}{{ path }}".format(api_prefix=API_PREFIX{{ path_params }})),
             params={{ query_params }},
             headers={{ header_params }},
             cookies={{ cookie_params }},

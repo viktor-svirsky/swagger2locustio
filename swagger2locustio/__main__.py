@@ -6,22 +6,30 @@ import logging
 from pathlib import Path
 
 import yaml
-from swagger2locustio import settings
+import coloredlogs
 from swagger2locustio.strategy.base_strategy import BaseStrategy
+
+API_OPERATIONS = ("get", "post", "put", "patch", "delete", "head", "options", "trace")
 
 
 def main():
     """Launching function"""
 
     parser = argparse.ArgumentParser(formatter_class=argparse.ArgumentDefaultsHelpFormatter)
-    parser.add_argument("--swagger-file", help="path to swagger file", required=True, type=Path)
+    parser.add_argument("-f", "--swagger-file", help="path to swagger file", required=True, type=Path)
     parser.add_argument(
-        "--results-path", help="path to store locustfile.py", required=False, default=Path("generated"), type=Path,
+        "-r",
+        "--results-path",
+        help="path to store locustfile.py",
+        required=False,
+        default=Path("generated"),
+        type=Path,
     )
     parser.add_argument(
-        "--loglevel", help="logging level", required=False, default="info", choices=settings.LOGGING_LEVELS, type=str,
+        "-v", "--verbose", help="verbose", required=False, action="store_true", default=False,
     )
     parser.add_argument(
+        "-s",
         "--strict-level",
         help="add paths with required params without default values to locust tests",
         required=False,
@@ -30,32 +38,36 @@ def main():
         default=2,
     )
     parser.add_argument(
+        "-o",
         "--operations",
         help="operations to use in api testing",
         required=False,
         nargs="+",
-        choices=settings.API_OPERATIONS,
+        choices=API_OPERATIONS,
         default=["get"],
     )
     parser.add_argument(
-        "--paths-white", help="paths to use in api testing", required=False, nargs="+", type=str, default=[]
+        "--paths-white", "--pw", help="paths to use in api testing", required=False, nargs="+", type=str, default=[]
     )
     parser.add_argument(
-        "--paths-black", help="paths not to use in api testing", required=False, nargs="+", type=str, default=[]
+        "--paths-black", "--pb", help="paths not to use in api testing", required=False, nargs="+", type=str, default=[]
     )
     parser.add_argument(
-        "--tags-white", help="tags to use in api testing", required=False, nargs="+", type=str, default=[]
+        "--tags-white", "--tw", help="tags to use in api testing", required=False, nargs="+", type=str, default=[]
     )
     parser.add_argument(
-        "--tags-black", help="tags to use in api testing", required=False, nargs="+", type=str, default=[]
+        "--tags-black", "--tb", help="tags to use in api testing", required=False, nargs="+", type=str, default=[]
     )
     args = parser.parse_args()
-    settings.config_logger(args.loglevel.upper())
+    if args.verbose:
+        loglevel = "DEBUG"
+    else:
+        loglevel = "INFO"
+    coloredlogs.install(level=loglevel, fmt="%(asctime)s [%(levelname)s] %(filename)s: %(message)s")
     log = logging.getLogger(__name__)
     log.debug("Command line args: %s", args)
     swagger_file = args.swagger_file
     ext = swagger_file.suffix
-    operations = args.operations
     paths = [path.lower() for path in args.paths_white]
     not_paths = [path.lower() for path in args.paths_black]
     tags = [tag.lower() for tag in args.tags_white]
@@ -67,7 +79,7 @@ def main():
         raise ValueError("Both `tags` and not `not_tags` arguments specified")
 
     mask = {
-        "operations_white_list": set(operations),
+        "operations_white_list": set(args.operations),
         "paths_white_list": set(paths),
         "paths_black_list": set(not_paths),
         "tags_white_list": set(tags),
@@ -84,7 +96,6 @@ def main():
     else:
         raise ValueError("Incorrect file format")
     swagger_strategy = BaseStrategy(swagger_data, args.results_path, mask, args.strict_level)
-    log.debug("Strategy: %s", swagger_strategy)
     try:
         swagger_strategy.process()
     except ValueError as error:

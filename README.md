@@ -26,7 +26,7 @@
         <img src="" />
     </a-->
     <a href="https://github.com/vsvirsky/swagger2locustio" alt="Github actions">
-        <img src="https://github.com/vsvirsky/swagger2locustio/.github/workflows/pythonpackage.yml/badge.svg" />
+        <img src="https://github.com/vsvirsky/swagger2locustio/workflows/Python package/badge.svg" />
     </a>
     <a href="https://github.com/pre-commit/pre-commit" alt="pre-commit">
         <img src="https://img.shields.io/badge/pre--commit-enabled-brightgreen?logo=pre-commit&logoColor=white" />
@@ -55,30 +55,29 @@ pip install swagger2locustio
 #### Command line options
 
 ```
-usage: swagger2locustio [-h] --swagger-file SWAGGER_FILE [--results-path RESULTS_PATH] [--loglevel {info,debug,warning,error}] [--strict-level {0,1,2}]
-                        [--operations {get,post,put,patch,delete,head,options,trace} [{get,post,put,patch,delete,head,options,trace} ...]]
+usage: swagger2locustio [-h] -f SWAGGER_FILE [-r RESULTS_PATH] [-v] [-s {0,1,2}]
+                        [-o {get,post,put,patch,delete,head,options,trace} [{get,post,put,patch,delete,head,options,trace} ...]]
                         [--paths-white PATHS_WHITE [PATHS_WHITE ...]] [--paths-black PATHS_BLACK [PATHS_BLACK ...]] [--tags-white TAGS_WHITE [TAGS_WHITE ...]]
                         [--tags-black TAGS_BLACK [TAGS_BLACK ...]]
 
 optional arguments:
   -h, --help            show this help message and exit
-  --swagger-file SWAGGER_FILE
+  -f SWAGGER_FILE, --swagger-file SWAGGER_FILE
                         path to swagger file (default: None)
-  --results-path RESULTS_PATH
+  -r RESULTS_PATH, --results-path RESULTS_PATH
                         path to store locustfile.py (default: generated)
-  --loglevel {info,debug,warning,error}
-                        logging level (default: info)
-  --strict-level {0,1,2}
+  -v, --verbose         verbose (default: False)
+  -s {0,1,2}, --strict-level {0,1,2}
                         add paths with required params without default values to locust tests (default: 2)
-  --operations {get,post,put,patch,delete,head,options,trace} [{get,post,put,patch,delete,head,options,trace} ...]
+  -o {get,post,put,patch,delete,head,options,trace} [{get,post,put,patch,delete,head,options,trace} ...], --operations {get,post,put,patch,delete,head,options,trace} [{get,post,put,patch,delete,head,options,trace} ...]
                         operations to use in api testing (default: ['get'])
-  --paths-white PATHS_WHITE [PATHS_WHITE ...]
+  --paths-white PATHS_WHITE [PATHS_WHITE ...], --pw PATHS_WHITE [PATHS_WHITE ...]
                         paths to use in api testing (default: [])
-  --paths-black PATHS_BLACK [PATHS_BLACK ...]
+  --paths-black PATHS_BLACK [PATHS_BLACK ...], --pb PATHS_BLACK [PATHS_BLACK ...]
                         paths not to use in api testing (default: [])
-  --tags-white TAGS_WHITE [TAGS_WHITE ...]
+  --tags-white TAGS_WHITE [TAGS_WHITE ...], --tw TAGS_WHITE [TAGS_WHITE ...]
                         tags to use in api testing (default: [])
-  --tags-black TAGS_BLACK [TAGS_BLACK ...]
+  --tags-black TAGS_BLACK [TAGS_BLACK ...], --tb TAGS_BLACK [TAGS_BLACK ...]
                         tags to use in api testing (default: [])
 ```
 
