@@ -106,6 +106,7 @@ class BaseGenerator:
         (self.results_path / self.constants_path / "base_constants.py").write_text(
             constants_templates.CONSTANTS_BASE_FILE.render()
         )
+        LOG.info("%s test methods were created successfully", len(test_classes_inheritance))
 
     def _get_or_create_test_class(self, ulr_path: str) -> TestClass:
         file_path_str = re.sub(PATH_PARAMS_PATTERN, "", ulr_path)
