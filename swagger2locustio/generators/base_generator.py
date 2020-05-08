@@ -116,12 +116,10 @@ class BaseGenerator:
         file_path = Path(*file_path_list[:-1])
         if not file_name.isidentifier():
             file_name = "test_" + file_name
-
-        class_name = file_name.replace("_", " ")
-        class_name = class_name.title()
-        class_name = class_name.replace(" ", "")
-
-        file_name += "_file"
+        file_name = file_name.replace("_", " ")
+        file_name = file_name.title()
+        class_name = file_name.replace(" ", "")
+        file_name = file_name.replace(" ", "_")
 
         test_class = self.test_classes_mapping.get(class_name)
         if test_class is None:
