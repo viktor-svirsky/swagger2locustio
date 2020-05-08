@@ -19,7 +19,7 @@ def main():
         "-r", "--results-path", help="path to store locustfile.py", required=False, default=Path("generated"), type=Path,
     )
     parser.add_argument(
-        "-v", "--verbose", help="logging level", required=False, default="info", choices=settings.LOGGING_LEVELS, type=str,
+        "-v", "--verbose", nargs='*', help="logging level", required=False, default="info", choices=settings.LOGGING_LEVELS, type=str,
     )
     parser.add_argument(
         "-s", "--strict-level",
@@ -50,7 +50,10 @@ def main():
         "--tb", "--tags-black", help="tags to use in api testing", required=False, nargs="+", type=str, default=[]
     )
     args = parser.parse_args()
-    settings.config_logger(args.loglevel.upper())
+    if len(args.verbose):
+        settings.config_logger(args.verbose[0].upper())
+    else:
+        settings.config_logger()
     log = logging.getLogger(__name__)
     log.debug("Command line args: %s", args)
     swagger_file = args.swagger_file
