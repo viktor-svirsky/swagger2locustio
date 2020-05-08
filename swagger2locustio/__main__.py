@@ -64,7 +64,7 @@ def main():
         "--tags-black", "--tb", help="tags to use in api testing", required=False, nargs="+", type=str, default=[]
     )
     args = parser.parse_args()
-    if len(args.verbose):
+    if len(args.verbose) > 0:
         settings.config_logger(args.verbose[0].upper())
     else:
         settings.config_logger()
