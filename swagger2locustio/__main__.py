@@ -16,13 +16,26 @@ def main():
     parser = argparse.ArgumentParser(formatter_class=argparse.ArgumentDefaultsHelpFormatter)
     parser.add_argument("-f", "--swagger-file", help="path to swagger file", required=True, type=Path)
     parser.add_argument(
-        "-r", "--results-path", help="path to store locustfile.py", required=False, default=Path("generated"), type=Path,
+        "-r",
+        "--results-path",
+        help="path to store locustfile.py",
+        required=False,
+        default=Path("generated"),
+        type=Path,
     )
     parser.add_argument(
-        "-v", "--verbose", nargs='*', help="logging level", required=False, default="info", choices=settings.LOGGING_LEVELS, type=str,
+        "-v",
+        "--verbose",
+        nargs="*",
+        help="logging level",
+        required=False,
+        default="info",
+        choices=settings.LOGGING_LEVELS,
+        type=str,
     )
     parser.add_argument(
-        "-s", "--strict-level",
+        "-s",
+        "--strict-level",
         help="add paths with required params without default values to locust tests",
         required=False,
         choices=(0, 1, 2),
@@ -30,7 +43,8 @@ def main():
         default=2,
     )
     parser.add_argument(
-        "-o", "--operations",
+        "-o",
+        "--operations",
         help="operations to use in api testing",
         required=False,
         nargs="+",
