@@ -38,16 +38,16 @@ def main():
         default=["get"],
     )
     parser.add_argument(
-        "--pw", "--paths-white", help="paths to use in api testing", required=False, nargs="+", type=str, default=[]
+        "--paths-white", "--pw", help="paths to use in api testing", required=False, nargs="+", type=str, default=[]
     )
     parser.add_argument(
-        "--pb", "--paths-black", help="paths not to use in api testing", required=False, nargs="+", type=str, default=[]
+        "--paths-black", "--pb", help="paths not to use in api testing", required=False, nargs="+", type=str, default=[]
     )
     parser.add_argument(
-        "--tw", "--tags-white", help="tags to use in api testing", required=False, nargs="+", type=str, default=[]
+        "--tags-white", "--tw", help="tags to use in api testing", required=False, nargs="+", type=str, default=[]
     )
     parser.add_argument(
-        "--tb", "--tags-black", help="tags to use in api testing", required=False, nargs="+", type=str, default=[]
+        "--tags-black", "--tb", help="tags to use in api testing", required=False, nargs="+", type=str, default=[]
     )
     args = parser.parse_args()
     if len(args.verbose):
