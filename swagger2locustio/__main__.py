@@ -14,15 +14,15 @@ def main():
     """Launching function"""
 
     parser = argparse.ArgumentParser(formatter_class=argparse.ArgumentDefaultsHelpFormatter)
-    parser.add_argument("--swagger-file", help="path to swagger file", required=True, type=Path)
+    parser.add_argument("-f", "--swagger-file", help="path to swagger file", required=True, type=Path)
     parser.add_argument(
-        "--results-path", help="path to store locustfile.py", required=False, default=Path("generated"), type=Path,
+        "-r", "--results-path", help="path to store locustfile.py", required=False, default=Path("generated"), type=Path,
     )
     parser.add_argument(
-        "--loglevel", help="logging level", required=False, default="info", choices=settings.LOGGING_LEVELS, type=str,
+        "-v", "--verbose", help="logging level", required=False, default="info", choices=settings.LOGGING_LEVELS, type=str,
     )
     parser.add_argument(
-        "--strict-level",
+        "-s", "--strict-level",
         help="add paths with required params without default values to locust tests",
         required=False,
         choices=(0, 1, 2),
@@ -30,7 +30,7 @@ def main():
         default=2,
     )
     parser.add_argument(
-        "--operations",
+        "-o", "--operations",
         help="operations to use in api testing",
         required=False,
         nargs="+",
@@ -38,16 +38,16 @@ def main():
         default=["get"],
     )
     parser.add_argument(
-        "--paths-white", help="paths to use in api testing", required=False, nargs="+", type=str, default=[]
+        "--pw", "--paths-white", help="paths to use in api testing", required=False, nargs="+", type=str, default=[]
     )
     parser.add_argument(
-        "--paths-black", help="paths not to use in api testing", required=False, nargs="+", type=str, default=[]
+        "--pb", "--paths-black", help="paths not to use in api testing", required=False, nargs="+", type=str, default=[]
     )
     parser.add_argument(
-        "--tags-white", help="tags to use in api testing", required=False, nargs="+", type=str, default=[]
+        "--tw", "--tags-white", help="tags to use in api testing", required=False, nargs="+", type=str, default=[]
     )
     parser.add_argument(
-        "--tags-black", help="tags to use in api testing", required=False, nargs="+", type=str, default=[]
+        "--tb", "--tags-black", help="tags to use in api testing", required=False, nargs="+", type=str, default=[]
     )
     args = parser.parse_args()
     settings.config_logger(args.loglevel.upper())
