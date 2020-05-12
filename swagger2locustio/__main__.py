@@ -1,5 +1,6 @@
 """Module: This is main module that actvates library"""
 
+import os
 import json
 import argparse
 import logging
@@ -100,6 +101,32 @@ def main():
         swagger_strategy.process()
     except ValueError as error:
         logging.error(error)
+
+    folders_amount = 0
+    files_amount = 0
+    classes_amount = 0
+    functions_amount = 0
+
+    for root, dirs, files in os.walk(args.results_path):
+        folders_amount += len(dirs)
+        files_amount += len(files)
+        for filename in files:
+            filepath = os.path.join(root, filename)
+            with open(filepath, 'r', encoding='utf-8') as f:
+                for line in f:
+                    found_class = line.find('class ')
+                    if found_class != -1:
+                        classes_amount += 1
+                    found_func = line.find('def ')
+                    if found_func != -1:
+                        functions_amount += 1
+
+    logging.info("created folders: "+str(folders_amount))
+    logging.info("created files: "+str(files_amount))
+    logging.info("created classes: "+str(classes_amount))
+    logging.info("created functions: "+str(functions_amount))
+    logging.info("Please make sure to fill in the constant files. Feel free to use helper functions to do it")
+    logging.info("We also advise to check authorization settings")
 
 
 if __name__ == "__main__":
