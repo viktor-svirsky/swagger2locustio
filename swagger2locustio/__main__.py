@@ -113,12 +113,12 @@ def main():
                     classes_amount += 1 if line.find("class ") != -1 else 0
                     functions_amount += 1 if line.find("def ") != -1 else 0
 
-    logging.info("created folders: "+str(folders_amount))
-    logging.info("created files: "+str(files_amount))
-    logging.info("created classes: "+str(classes_amount))
-    logging.info("created functions: "+str(functions_amount))
-    logging.info("Please make sure to fill in the constant files. Feel free to use helper functions to do it")
-    logging.info("We also advise to check authorization settings")
+    logging.info("created folders: %s", str(folders_amount))
+    logging.info("created files: %s", str(files_amount))
+    logging.info("created classes: %s", str(classes_amount))
+    logging.info("created functions: %s", str(functions_amount))
+    logging.info("NOTE: Please make sure to fill in the constant files. Feel free to use helper functions to do it")
+    logging.info("NOTE: We also advise to check authorization settings")
 
 
 if __name__ == "__main__":
