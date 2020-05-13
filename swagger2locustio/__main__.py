@@ -107,9 +107,8 @@ def main():
         folders_amount += len(dirs)
         files_amount += len(files)
         for filename in files:
-            filepath = os.path.join(root, filename)
-            with open(filepath, 'r', encoding='utf-8') as f:
-                for line in f:
+            with open(os.path.join(root, filename), "r", encoding="utf-8") as file:
+                for line in file:
                     classes_amount += 1 if line.find("class ") != -1 else 0
                     functions_amount += 1 if line.find("def ") != -1 else 0
 
