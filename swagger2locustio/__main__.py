@@ -102,8 +102,14 @@ def main():
     except ValueError as error:
         logging.error(error)
 
+    log_result(args.results_path)
+
+
+def log_result(results_path):
+    """Function: log run results"""
+
     folders_amount, files_amount, classes_amount, functions_amount = 0, 0, 0, 0
-    for root, dirs, files in os.walk(args.results_path):
+    for root, dirs, files in os.walk(results_path):
         folders_amount += len(dirs)
         files_amount += len(files)
         for filename in files:
