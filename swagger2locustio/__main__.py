@@ -102,11 +102,7 @@ def main():
     except ValueError as error:
         logging.error(error)
 
-    folders_amount = 0
-    files_amount = 0
-    classes_amount = 0
-    functions_amount = 0
-
+    folders_amount, files_amount, classes_amount, functions_amount = 0, 0, 0, 0
     for root, dirs, files in os.walk(args.results_path):
         folders_amount += len(dirs)
         files_amount += len(files)
@@ -114,12 +110,8 @@ def main():
             filepath = os.path.join(root, filename)
             with open(filepath, 'r', encoding='utf-8') as f:
                 for line in f:
-                    found_class = line.find('class ')
-                    if found_class != -1:
-                        classes_amount += 1
-                    found_func = line.find('def ')
-                    if found_func != -1:
-                        functions_amount += 1
+                    classes_amount += 1 if line.find("class ") != -1 else 0
+                    functions_amount += 1 if line.find("def ") != -1 else 0
 
     logging.info("created folders: "+str(folders_amount))
     logging.info("created files: "+str(files_amount))
