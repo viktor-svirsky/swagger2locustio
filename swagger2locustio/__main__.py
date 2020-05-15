@@ -61,10 +61,9 @@ def main():
     )
     args = parser.parse_args()
     if args.verbose:
-        loglevel = "DEBUG"
+        coloredlogs.install(level="DEBUG", fmt="%(asctime)s [%(levelname)s] %(filename)s: %(message)s")
     else:
-        loglevel = "INFO"
-    coloredlogs.install(level=loglevel, fmt="%(asctime)s [%(levelname)s] %(filename)s: %(message)s")
+        coloredlogs.install(level="INFO", fmt="%(asctime)s [%(levelname)s] %(filename)s: %(message)s")
     log = logging.getLogger(__name__)
     log.debug("Command line args: %s", args)
     swagger_file = args.swagger_file
