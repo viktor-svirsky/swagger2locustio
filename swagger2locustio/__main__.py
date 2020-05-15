@@ -114,9 +114,10 @@ def log_diff(start, end):
         start_key = set(start[key])
         end_key = set(end[key])
 
-        unchanged, updated = 0, 0
         created = end_key - start_key
         deleted = start_key - end_key
+
+        unchanged, updated = [], []
         for each_start in start_key:
             for each_end in end_key:
                 if each_start == each_end:
@@ -151,9 +152,9 @@ def log_result_named(results_path):
             with open(os.path.join(root, filename), "r", encoding="utf-8") as file:
                 for line in file:
                     if line.find("class ") != -1:
-                        result["classes"].append(os.path.join(root, filename, line))
+                        result["classes"].append(os.path.join(root, filename, line.lstrip()))
                     elif line.find("def ") != -1:
-                        result["functions"].append(os.path.join(root, filename, line))
+                        result["functions"].append(os.path.join(root, filename, line.lstrip()))
                     elif len(result["classes"]) > 0:
                         result["classes"][-1] += line
                     elif len(result["functions"]) > 0:
