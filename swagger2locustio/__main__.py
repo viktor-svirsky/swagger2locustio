@@ -113,14 +113,15 @@ def log_diff(start, end):
     for key in start.keys():
         start_key = set(start[key])
         end_key = set(end[key])
-        unchanged, updated = 0, 0
 
+        unchanged, updated = 0, 0
         for each_start in start_key:
             for each_end in end_key:
                 if each_start == each_end:
                     unchanged += 1
                 elif each_start[: each_start.find("\n")] == each_end[: each_end.find("\n")]:
                     updated += 1
+
         logging.info("%s CREATED: %s", key, str(len(end_key - start_key)))
         logging.info("%s UNCHANGED: %s", key, unchanged)
         logging.info("%s UPDATED: %s", key, updated)
@@ -134,9 +135,7 @@ def log_result_named(results_path):
         "folders": [],
         "files": [],
         "classes": [],
-        "classes_code": [],
         "functions": [],
-        "functions_code": [],
     }
 
     for root, dirs, files in os.walk(results_path):
@@ -146,19 +145,13 @@ def log_result_named(results_path):
             with open(os.path.join(root, filename), "r", encoding="utf-8") as file:
                 for line in file:
                     if line.find("class ") != -1:
-                        line = os.path.join(root, filename, line)
-                        line = line[: line.find("\n")]
-                        result["classes"].append(line)
-                        result["classes_code"].append(line)
+                        result["classes"].append(os.path.join(root, filename, line))
                     elif line.find("def ") != -1:
-                        line = os.path.join(root, filename, line)
-                        line = line[: line.find("\n")]
-                        result["functions"].append(line)
-                        result["functions_code"].append(line)
-                    elif len(result["classes_code"]) > 0:
-                        result["classes_code"][-1] += line
-                    elif len(result["functions_code"]) > 0:
-                        result["functions_code"][-1] += line
+                        result["functions"].append(os.path.join(root, filename, line))
+                    elif len(result["classes"]) > 0:
+                        result["classes"][-1] += line
+                    elif len(result["functions"]) > 0:
+                        result["functions"][-1] += line
 
     return result
 
