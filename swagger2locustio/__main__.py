@@ -114,8 +114,8 @@ def log_diff(start, end):
         start_key = set(start[key])
         end_key = set(end[key])
 
-        start_key_names = set([x[: x.find("\n")] for x in start_key])
-        end_key_names = set([x[: x.find("\n")] for x in end_key])
+        start_key_names = {x[: x.find("\n")] for x in start_key}
+        end_key_names = {x[: x.find("\n")] for x in end_key}
         created = end_key_names - start_key_names
         deleted = start_key_names - end_key_names
 
