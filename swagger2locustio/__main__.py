@@ -115,17 +115,23 @@ def log_diff(start, end):
         end_key = set(end[key])
 
         unchanged, updated = 0, 0
+        created = end_key - start_key
+        deleted = start_key - end_key
         for each_start in start_key:
             for each_end in end_key:
                 if each_start == each_end:
-                    unchanged += 1
+                    unchanged.append(each_start[: each_start.find("\n")])
                 elif each_start[: each_start.find("\n")] == each_end[: each_end.find("\n")]:
-                    updated += 1
+                    updated.append(each_start[: each_start.find("\n")])
 
-        logging.info("%s CREATED: %s", key, str(len(end_key - start_key)))
-        logging.info("%s UNCHANGED: %s", key, unchanged)
-        logging.info("%s UPDATED: %s", key, updated)
-        logging.info("%s DELETED: %s", key, str(len(start_key - end_key)))
+        logging.info("%s CREATED: %s", key, len(created))
+        logging.debug("%s CREATED: %s", key, [x[: x.find("\n")] for x in created])
+        logging.info("%s UNCHANGED: %s", key, len(unchanged))
+        logging.debug("%s UNCHANGED: %s", key, unchanged)
+        logging.info("%s UPDATED: %s", key, len(updated))
+        logging.debug("%s UPDATED: %s", key, updated)
+        logging.info("%s DELETED: %s", key, len(deleted))
+        logging.debug("%s DELETED: %s", key, [x[: x.find("\n")] for x in deleted])
 
 
 def log_result_named(results_path):
