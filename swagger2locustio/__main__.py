@@ -167,6 +167,17 @@ def log_result_named(results_path):
                     elif len(result["functions"]) > 0:
                         result["functions"][-1] += line
 
+    results_path = str(results_path)
+    results_path_len = len(results_path)
+    for key in result.keys():
+        for index, file_path in enumerate(result[key]):
+            if file_path[:results_path_len] == results_path:
+                file_path = file_path[results_path_len:]
+            else:
+                logging.warning("unknown path %s was mentioned", file_path)
+
+            result[key][index] = file_path
+
     return result
 
 
