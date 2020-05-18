@@ -104,11 +104,11 @@ def main():
     except ValueError as error:
         logging.error(error)
 
-    log_diff(main_start, log_result_named(args.results_path))
+    log_diff(main_start, log_result_named(args.results_path), args.results_path)
     # log_result(args.results_path)
 
 
-def log_diff(start, end):
+def log_diff(start, end, results_path):
     """Function: log difference"""
 
     for key in start.keys():
@@ -140,6 +140,7 @@ def log_diff(start, end):
     logging.info("NOTE: Please make sure to fill in the constant files. Feel free to use helper functions to do it")
     logging.info("NOTE: We also advise to check authorization settings")
     logging.info("NOTE: Some class updates can be triggered by changes in order of items used due to set type usage")
+    logging.debug("NOTE: All the paths mentioned use %s as root directory", results_path)
 
 
 def log_result_named(results_path):
