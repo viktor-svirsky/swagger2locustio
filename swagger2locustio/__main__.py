@@ -105,6 +105,7 @@ def main():
         logging.error(error)
 
     log_diff(main_start, log_result_named(args.results_path))
+    # log_result(args.results_path)
 
 
 def log_diff(start, end):
@@ -128,13 +129,15 @@ def log_diff(start, end):
                     updated.append(each_start[: each_start.find("\n")])
 
         logging.info("%s CREATED: %s", key, len(created))
-        logging.debug("%s CREATED: %s", key, [x[: x.find("\n")] for x in created])
+        logging.debug("%s CREATED items: %s", key, [x[: x.find("\n")] for x in created])
         logging.info("%s UNCHANGED: %s", key, len(unchanged))
-        logging.debug("%s UNCHANGED: %s", key, unchanged)
+        logging.debug("%s UNCHANGED items: %s", key, unchanged)
         logging.info("%s UPDATED: %s", key, len(updated))
-        logging.debug("%s UPDATED: %s", key, updated)
+        logging.debug("%s UPDATED items: %s", key, updated)
         logging.info("%s DELETED: %s", key, len(deleted))
-        logging.debug("%s DELETED: %s", key, [x[: x.find("\n")] for x in deleted])
+        logging.debug("%s DELETED items: %s", key, [x[: x.find("\n")] for x in deleted])
+        logging.info("NOTE: Please make sure to fill in the constant files. Feel free to use helper functions to do it")
+        logging.info("NOTE: We also advise to check authorization settings")
 
 
 def log_result_named(results_path):
