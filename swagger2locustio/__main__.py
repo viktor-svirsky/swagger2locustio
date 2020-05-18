@@ -136,8 +136,10 @@ def log_diff(start, end):
         logging.debug("%s UPDATED items: %s", key, updated)
         logging.info("%s DELETED: %s", key, len(deleted))
         logging.debug("%s DELETED items: %s", key, [x[: x.find("\n")] for x in deleted])
-        logging.info("NOTE: Please make sure to fill in the constant files. Feel free to use helper functions to do it")
-        logging.info("NOTE: We also advise to check authorization settings")
+
+    logging.info("NOTE: Please make sure to fill in the constant files. Feel free to use helper functions to do it")
+    logging.info("NOTE: We also advise to check authorization settings")
+    logging.info("NOTE: Some class updates can be triggered by changes in order of items used due to set type usage")
 
 
 def log_result_named(results_path):
