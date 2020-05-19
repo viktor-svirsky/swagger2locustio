@@ -123,9 +123,9 @@ def log_diff(start, end, results_path):
         unchanged, updated = [], []
         for each_start in start_key:
             for each_end in end_key:
-                if each_start.find("\n") != -1 and each_end.find("\n") != -1 and each_start == each_end:
+                if each_start.find("\n") != -1 and each_end.find("\n") != -1 and each_start == each_end:  # classes and functions
                     unchanged.append(each_start[: each_start.find("\n")])
-                elif each_start == each_end:
+                elif each_start == each_end:  # folders and files
                     unchanged.append(each_start)
                 elif each_start[: each_start.find("\n")] == each_end[: each_end.find("\n")]:
                     updated.append(each_start[: each_start.find("\n")])
@@ -142,9 +142,9 @@ def log_diff(start, end, results_path):
         # if len(created) != 0:
         #     logging.info("created: %s", len(created))
         #     logging.debug("created items: %s", [x[: x.find("\n")] for x in created])
-        # # if len(unchanged) != 0:
-        # #     logging.info("unchanged: %s", len(unchanged))
-        # #     logging.debug("unchanged items: %s", unchanged)
+        # if len(unchanged) != 0:
+        #     logging.info("unchanged: %s", len(unchanged))
+        #     logging.debug("unchanged items: %s", unchanged)
         # if len(updated) != 0:
         #     logging.info("updated: %s", len(updated))
         #     logging.debug("updated items: %s", updated)
@@ -203,25 +203,25 @@ def log_result_named(results_path):
     return result
 
 
-def log_result(results_path):
-    """Function: log run results"""
+# def log_result(results_path):
+#     """Function: log run results"""
 
-    folders_amount, files_amount, classes_amount, functions_amount = 0, 0, 0, 0
-    for root, dirs, files in os.walk(results_path):
-        folders_amount += len(dirs)
-        files_amount += len(files)
-        for filename in files:
-            with open(os.path.join(root, filename), "r", encoding="utf-8") as file:
-                for line in file:
-                    classes_amount += 1 if line.find("class ") != -1 else 0
-                    functions_amount += 1 if line.find("def ") != -1 else 0
+#     folders_amount, files_amount, classes_amount, functions_amount = 0, 0, 0, 0
+#     for root, dirs, files in os.walk(results_path):
+#         folders_amount += len(dirs)
+#         files_amount += len(files)
+#         for filename in files:
+#             with open(os.path.join(root, filename), "r", encoding="utf-8") as file:
+#                 for line in file:
+#                     classes_amount += 1 if line.find("class ") != -1 else 0
+#                     functions_amount += 1 if line.find("def ") != -1 else 0
 
-    logging.info("created folders: %s", str(folders_amount))
-    logging.info("created files: %s", str(files_amount))
-    logging.info("created classes: %s", str(classes_amount))
-    logging.info("created functions: %s", str(functions_amount))
-    logging.info("NOTE: Please make sure to fill in the constant files. Feel free to use helper functions to do it")
-    logging.info("NOTE: We also advise to check authorization settings")
+#     logging.info("created folders: %s", str(folders_amount))
+#     logging.info("created files: %s", str(files_amount))
+#     logging.info("created classes: %s", str(classes_amount))
+#     logging.info("created functions: %s", str(functions_amount))
+#     logging.info("NOTE: Please make sure to fill in the constant files. Feel free to use helper functions to do it")
+#     logging.info("NOTE: We also advise to check authorization settings")
 
 
 if __name__ == "__main__":
