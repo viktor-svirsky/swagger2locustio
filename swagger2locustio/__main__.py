@@ -136,11 +136,30 @@ def log_diff(start, end, results_path):
         logging.debug("%s UPDATED items: %s", key, updated)
         logging.info("%s DELETED: %s", key, len(deleted))
         logging.debug("%s DELETED items: %s", key, [x[: x.find("\n")] for x in deleted])
+        # logging.info("==== %s ====", key.upper())
+        # if len(created) != 0:
+        #     logging.info("created: %s", len(created))
+        #     logging.debug("created items: %s", [x[: x.find("\n")] for x in created])
+        # # if len(unchanged) != 0:
+        # #     logging.info("unchanged: %s", len(unchanged))
+        # #     logging.debug("unchanged items: %s", unchanged)
+        # if len(updated) != 0:
+        #     logging.info("updated: %s", len(updated))
+        #     logging.debug("updated items: %s", updated)
+        # if len(deleted) != 0:
+        #     logging.info("deleted: %s", len(deleted))
+        #     logging.debug("deleted items: %s", [x[: x.find("\n")] for x in deleted])
+        # logging.info("")
 
     logging.info("NOTE: Please make sure to fill in the constant files. Feel free to use helper functions to do it")
     logging.info("NOTE: We also advise to check authorization settings")
     logging.info("NOTE: Some class updates can be triggered by changes in order of items used due to set type usage")
     logging.debug("NOTE: All the paths mentioned use %s as root directory", results_path)
+    # logging.info("==== NOTE: ====")
+    # logging.info("- Please make sure to fill in the constant files. Feel free to use helper functions to do it")
+    # logging.info("- We also advise to check authorization settings")
+    # logging.info("- Some class updates can be triggered by changes in order of items used due to set type usage")
+    # logging.debug("- All the paths mentioned use %s as root directory", results_path)
 
 
 def log_result_named(results_path):
