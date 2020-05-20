@@ -166,10 +166,13 @@ def log_result_named(results_path):
 
     for root, dirs, files in os.walk(results_path):
         result["folders"] += [os.path.join(root, x) for x in dirs]
-        result["files"] += [os.path.join(root, x) for x in files]
+        
         for filename in files:
             file_path = os.path.join(root, filename)
             with open(file_path, "r", encoding="utf-8") as file:
+                result["files"].append(file_path +": "+ file.read())
+                file.seek(0)
+
                 for line in file:
                     if line.find("class ") != -1:
                         result["classes"].append(file_path +": "+ line.lstrip())
