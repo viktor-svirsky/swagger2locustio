@@ -122,7 +122,7 @@ def log_diff(start, end, results_path):
         }
 
         # CREATED / DELETED
-        # cutting of multiline to avoid issues with code that was changed
+        # cutting off multiline to avoid issues with code that was changed
         start_key_names = {x[: x.find("\n")] if "\n" in x else x for x in start_key}
         end_key_names = {x[: x.find("\n")] if "\n" in x else x for x in end_key}
         result["created"] = list(end_key_names - start_key_names)
