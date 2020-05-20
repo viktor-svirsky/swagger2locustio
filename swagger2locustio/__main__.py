@@ -106,7 +106,6 @@ def main():
         logging.error(error)
 
     log_diff(main_start, log_result_named(args.results_path), args.results_path)
-    # log_result(args.results_path)
 
 
 def log_diff(start, end, results_path):
@@ -154,10 +153,6 @@ def log_diff(start, end, results_path):
     logging.info("NOTE: Please make sure to fill in the constant files. Feel free to use helper functions to do it")
     logging.info("NOTE: We also advise to check authorization settings")
     logging.debug("NOTE: All the paths mentioned use %s as root directory", results_path)
-    # logging.info("==== NOTE: ====")
-    # logging.info("- Please make sure to fill in the constant files. Feel free to use helper functions to do it")
-    # logging.info("- We also advise to check authorization settings")
-    # logging.debug("- All the paths mentioned use %s as root directory", results_path)
 
 
 def log_result_named(results_path):
