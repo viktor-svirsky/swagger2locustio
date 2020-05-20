@@ -184,12 +184,14 @@ def log_result_named(results_path):
                     if line.find("class ") != -1:
                         result["classes"].append(file_path + ": " + line.lstrip())
                         file_class = len(result["classes"]) - 1
+                        file_function = -1
                     elif line.find("def ") != -1:
                         result["functions"].append(file_path + ": " + line.lstrip())
                         file_function = len(result["functions"]) - 1
-                    elif file_class >= 0:
+
+                    if file_class >= 0:
                         result["classes"][file_class] += line
-                    elif file_function >= 0:
+                    if file_function >= 0:
                         result["functions"][file_function] += line
 
     results_path = str(results_path)
