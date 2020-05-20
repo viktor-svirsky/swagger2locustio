@@ -130,12 +130,10 @@ def log_diff(start, end, results_path):
 
         for each_start in start_key:
             for each_end in end_key:
-                if each_start.find("\n") != -1 and each_end.find("\n") != -1 and each_start == each_end:
-                    # classes and functions
-                    result["unchanged"].append(each_start[: each_start.find("\n")])
-                elif each_start == each_end:
-                    # folders and files
-                    result["unchanged"].append(each_start)
+                if each_start == each_end:
+                    result["unchanged"].append(
+                        each_start[: each_start.find("\n")] if each_start.find("\n") != -1 else each_start
+                    )
                 elif each_start[: each_start.find("\n")] == each_end[: each_end.find("\n")]:
                     result["updated"].append(each_start[: each_start.find("\n")])
 
