@@ -111,8 +111,8 @@ def main():
 def log_diff(start, end, results_path):
     """Function: log difference"""
 
-    for key in start.keys():
-        start_key = set(start[key])
+    for key, items in start.items():
+        start_key = set(items)
         end_key = set(end[key])
 
         start_key_names = {x[: x.find("\n")] for x in start_key}
@@ -152,15 +152,21 @@ def log_diff(start, end, results_path):
         #     logging.info("deleted: %s", len(deleted))
         #     logging.debug("deleted items: %s", [x[: x.find("\n")] for x in deleted])
         # logging.info("")
+            logging.info("%s UNCHANGED: %s", key, len(unchanged))
+            logging.debug("%s UNCHANGED items: %s", key, unchanged)
+        if len(updated) != 0 and key not in ["folders", "files"]:
+            logging.info("%s UPDATED: %s", key, len(updated))
+            logging.debug("%s UPDATED items: %s", key, updated)
+        if len(deleted) != 0:
+            logging.info("%s DELETED: %s", key, len(deleted))
+            logging.debug("%s DELETED items: %s", key, [x[: x.find("\n")] for x in deleted])
 
     logging.info("NOTE: Please make sure to fill in the constant files. Feel free to use helper functions to do it")
     logging.info("NOTE: We also advise to check authorization settings")
-    logging.info("NOTE: Some class updates can be triggered by changes in order of items used due to set type usage")
     logging.debug("NOTE: All the paths mentioned use %s as root directory", results_path)
     # logging.info("==== NOTE: ====")
     # logging.info("- Please make sure to fill in the constant files. Feel free to use helper functions to do it")
     # logging.info("- We also advise to check authorization settings")
-    # logging.info("- Some class updates can be triggered by changes in order of items used due to set type usage")
     # logging.debug("- All the paths mentioned use %s as root directory", results_path)
 
 
@@ -201,27 +207,6 @@ def log_result_named(results_path):
             result[key][index] = file_path
 
     return result
-
-
-# def log_result(results_path):
-#     """Function: log run results"""
-
-#     folders_amount, files_amount, classes_amount, functions_amount = 0, 0, 0, 0
-#     for root, dirs, files in os.walk(results_path):
-#         folders_amount += len(dirs)
-#         files_amount += len(files)
-#         for filename in files:
-#             with open(os.path.join(root, filename), "r", encoding="utf-8") as file:
-#                 for line in file:
-#                     classes_amount += 1 if line.find("class ") != -1 else 0
-#                     functions_amount += 1 if line.find("def ") != -1 else 0
-
-#     logging.info("created folders: %s", str(folders_amount))
-#     logging.info("created files: %s", str(files_amount))
-#     logging.info("created classes: %s", str(classes_amount))
-#     logging.info("created functions: %s", str(functions_amount))
-#     logging.info("NOTE: Please make sure to fill in the constant files. Feel free to use helper functions to do it")
-#     logging.info("NOTE: We also advise to check authorization settings")
 
 
 if __name__ == "__main__":
