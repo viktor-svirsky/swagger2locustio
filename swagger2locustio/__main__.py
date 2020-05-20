@@ -112,16 +112,14 @@ def log_diff(start, end, results_path):
     """Function: log difference"""
 
     for key, items in start.items():
-
+        start_key = set(items)
+        end_key = set(end[key])
         result = {
             "created": [],
             "unchanged": [],
             "updated": [],
-            "created": [],
+            "deleted": [],
         }
-        
-        start_key = set(items)
-        end_key = set(end[key])
 
         # CREATED / DELETED
         # cutting of multiline to avoid issues with code that was changed
@@ -146,7 +144,7 @@ def log_diff(start, end, results_path):
             result[result_key].sort()
             result_len = len(result[result_key])
             if result_len != 0 and (key != "folders" or result_key != "updated"):
-                logging.info("%s %s: %s", key.upper(), result_key, result_len)
+                logging.info("%s %s: %d", key.upper(), result_key, result_len)
                 if result_key != "unchanged":
                     logging.debug("%s %s items:", key.upper(), result_key)
                     for each in result[result_key]:
@@ -173,22 +171,22 @@ def log_result_named(results_path):
 
     for root, dirs, files in os.walk(results_path):
         result["folders"] += [os.path.join(root, x) for x in dirs]
-        
+
         for filename in files:
             file_path = os.path.join(root, filename)
             with open(file_path, "r", encoding="utf-8") as file:
-                result["files"].append(file_path +"\n"+ file.read())
+                result["files"].append(file_path + "\n" + file.read())
                 file.seek(0)
 
                 file_class = -1
                 file_function = -1
                 for line in file:
                     if line.find("class ") != -1:
-                        result["classes"].append(file_path +": "+ line.lstrip())
-                        file_class = len(result["classes"])-1
+                        result["classes"].append(file_path + ": " + line.lstrip())
+                        file_class = len(result["classes"]) - 1
                     elif line.find("def ") != -1:
-                        result["functions"].append(file_path +": "+ line.lstrip())
-                        file_function = len(result["functions"])-1
+                        result["functions"].append(file_path + ": " + line.lstrip())
+                        file_function = len(result["functions"]) - 1
                     elif file_class >= 0:
                         result["classes"][file_class] += line
                     elif file_function >= 0:
