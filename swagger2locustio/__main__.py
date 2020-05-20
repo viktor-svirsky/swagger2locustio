@@ -112,38 +112,41 @@ def log_diff(start, end, results_path):
     """Function: log difference"""
 
     for key, items in start.items():
+
+        result = {
+            "created": [],
+            "unchanged": [],
+            "updated": [],
+            "created": [],
+        }
+        
         start_key = set(items)
         end_key = set(end[key])
 
         start_key_names = {x[: x.find("\n")] for x in start_key}
         end_key_names = {x[: x.find("\n")] for x in end_key}
-        created = end_key_names - start_key_names
-        deleted = start_key_names - end_key_names
+        result["created"] = list(end_key_names - start_key_names)
+        result["deleted"] = list(start_key_names - end_key_names)
 
-        unchanged, updated = [], []
         for each_start in start_key:
             for each_end in end_key:
                 if each_start.find("\n") != -1 and each_end.find("\n") != -1 and each_start == each_end:
                     # classes and functions
-                    unchanged.append(each_start[: each_start.find("\n")])
+                    result["unchanged"].append(each_start[: each_start.find("\n")])
                 elif each_start == each_end:
                     # folders and files
-                    unchanged.append(each_start)
+                    result["unchanged"].append(each_start)
                 elif each_start[: each_start.find("\n")] == each_end[: each_end.find("\n")]:
-                    updated.append(each_start[: each_start.find("\n")])
+                    result["updated"].append(each_start[: each_start.find("\n")])
 
-        if len(created) != 0:
-            logging.info("%s CREATED: %s", key, len(created))
-            logging.debug("%s CREATED items: %s", key, [x[: x.find("\n")] for x in created])
-        if len(unchanged) != 0:
-            logging.info("%s UNCHANGED: %s", key, len(unchanged))
-            logging.debug("%s UNCHANGED items: %s", key, unchanged)
-        if len(updated) != 0 and key != "folders":
-            logging.info("%s UPDATED: %s", key, len(updated))
-            logging.debug("%s UPDATED items: %s", key, updated)
-        if len(deleted) != 0:
-            logging.info("%s DELETED: %s", key, len(deleted))
-            logging.debug("%s DELETED items: %s", key, [x[: x.find("\n")] for x in deleted])
+        for result_key in result:
+            result_len = len(result[result_key])
+            if result_len != 0 and (key != "folders" or result_key != "updated"):
+                logging.info("%s %s: %s", key.upper(), result_key, result_len)
+                if result_key != "unchanged":
+                    logging.debug("%s %s items:", key.upper(), result_key)
+                    for each in result[result_key]:
+                        logging.debug("    %s", each)
 
     logging.info("NOTE: Please make sure to fill in the constant files. Feel free to use helper functions to do it")
     logging.info("NOTE: We also advise to check authorization settings")
