@@ -140,6 +140,7 @@ def log_diff(start, end, results_path):
                     result["updated"].append(each_start[: each_start.find("\n")])
 
         for result_key in result:
+            result[result_key].sort()
             result_len = len(result[result_key])
             if result_len != 0 and (key != "folders" or result_key != "updated"):
                 logging.info("%s %s: %s", key.upper(), result_key, result_len)
