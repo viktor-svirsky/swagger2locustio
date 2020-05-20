@@ -123,8 +123,8 @@ def log_diff(start, end, results_path):
 
         # CREATED / DELETED
         # cutting of multiline to avoid issues with code that was changed
-        start_key_names = {x[: x.find("\n")] if x.find("\n") != -1 else x for x in start_key}
-        end_key_names = {x[: x.find("\n")] if x.find("\n") != -1 else x for x in end_key}
+        start_key_names = {x[: x.find("\n")] if "\n" in x else x for x in start_key}
+        end_key_names = {x[: x.find("\n")] if "\n" in x else x for x in end_key}
         result["created"] = list(end_key_names - start_key_names)
         result["deleted"] = list(start_key_names - end_key_names)
 
@@ -134,7 +134,7 @@ def log_diff(start, end, results_path):
                 if each_start == each_end:
                     # folder entries do not include \n, so last letter is being cut off
                     result["unchanged"].append(
-                        each_start[: each_start.find("\n")] if each_start.find("\n") != -1 else each_start
+                        each_start[: each_start.find("\n")] if "\n" in each_start else each_start
                     )
                 elif each_start[: each_start.find("\n")] == each_end[: each_end.find("\n")]:
                     result["updated"].append(each_start[: each_start.find("\n")])
