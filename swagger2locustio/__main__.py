@@ -168,12 +168,13 @@ def log_result_named(results_path):
         result["folders"] += [os.path.join(root, x) for x in dirs]
         result["files"] += [os.path.join(root, x) for x in files]
         for filename in files:
-            with open(os.path.join(root, filename), "r", encoding="utf-8") as file:
+            file_path = os.path.join(root, filename)
+            with open(file_path, "r", encoding="utf-8") as file:
                 for line in file:
                     if line.find("class ") != -1:
-                        result["classes"].append(os.path.join(root, filename, line.lstrip()))
+                        result["classes"].append(file_path +": "+ line.lstrip())
                     elif line.find("def ") != -1:
-                        result["functions"].append(os.path.join(root, filename, line.lstrip()))
+                        result["functions"].append(file_path +": "+ line.lstrip())
                     elif len(result["classes"]) > 0:
                         result["classes"][-1] += line
                     elif len(result["functions"]) > 0:
