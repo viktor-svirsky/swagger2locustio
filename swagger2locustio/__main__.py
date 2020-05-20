@@ -123,19 +123,24 @@ def log_diff(start, end, results_path):
         start_key = set(items)
         end_key = set(end[key])
 
+        # CREATED / DELETED
+        # cutting of multiline to avoid issues with code that was changed
         start_key_names = {x[: x.find("\n")] if x.find("\n") != -1 else x for x in start_key}
         end_key_names = {x[: x.find("\n")] if x.find("\n") != -1 else x for x in end_key}
         result["created"] = list(end_key_names - start_key_names)
         result["deleted"] = list(start_key_names - end_key_names)
 
+        # UNCHANGED / UPDATED
         for each_start in start_key:
             for each_end in end_key:
                 if each_start == each_end:
+                    # folder entries do not include \n, so last letter is being cut off
                     result["unchanged"].append(
                         each_start[: each_start.find("\n")] if each_start.find("\n") != -1 else each_start
                     )
                 elif each_start[: each_start.find("\n")] == each_end[: each_end.find("\n")]:
                     result["updated"].append(each_start[: each_start.find("\n")])
+                # else is not used as we compare two lists which includes a lot of false entries
 
         for result_key in result:
             result[result_key].sort()
