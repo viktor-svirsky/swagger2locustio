@@ -17,7 +17,7 @@ PATH_PARAMS_PATTERN = re.compile(r"{.*?}", re.UNICODE)
 IDENTIFIER_PATTERN = re.compile(r"[^\d\w/]", re.UNICODE)
 
 
-@dataclass(frozen=True)
+@dataclass(frozen=True, order=True)
 class Constant:
     """Data Class: Constant"""
 
@@ -78,6 +78,7 @@ class BaseGenerator:
             class_file_path = self.results_path / self.tests_path / test_class.file_path
             class_file_path.mkdir(parents=True, exist_ok=True)
             file_name = f"{test_class.file_name}.py"
+            class_constants = list(sorted(class_constants))
             constants_str = ", ".join([constant.name for constant in class_constants])
             import_path = str(self.tests_path / test_class.file_path / test_class.file_name).replace("/", ".")
             test_classes_imports.append(f"from {import_path} import {test_class.class_name}")
