@@ -132,28 +132,10 @@ def log_diff(start, end, results_path):
                 elif each_start[: each_start.find("\n")] == each_end[: each_end.find("\n")]:
                     updated.append(each_start[: each_start.find("\n")])
 
-        logging.info("%s CREATED: %s", key, len(created))
-        logging.debug("%s CREATED items: %s", key, [x[: x.find("\n")] for x in created])
-        logging.info("%s UNCHANGED: %s", key, len(unchanged))
-        logging.debug("%s UNCHANGED items: %s", key, unchanged)
-        logging.info("%s UPDATED: %s", key, len(updated))
-        logging.debug("%s UPDATED items: %s", key, updated)
-        logging.info("%s DELETED: %s", key, len(deleted))
-        logging.debug("%s DELETED items: %s", key, [x[: x.find("\n")] for x in deleted])
-        # logging.info("==== %s ====", key.upper())
-        # if len(created) != 0:
-        #     logging.info("created: %s", len(created))
-        #     logging.debug("created items: %s", [x[: x.find("\n")] for x in created])
-        # if len(unchanged) != 0:
-        #     logging.info("unchanged: %s", len(unchanged))
-        #     logging.debug("unchanged items: %s", unchanged)
-        # if len(updated) != 0:
-        #     logging.info("updated: %s", len(updated))
-        #     logging.debug("updated items: %s", updated)
-        # if len(deleted) != 0:
-        #     logging.info("deleted: %s", len(deleted))
-        #     logging.debug("deleted items: %s", [x[: x.find("\n")] for x in deleted])
-        # logging.info("")
+        if len(created) != 0:
+            logging.info("%s CREATED: %s", key, len(created))
+            logging.debug("%s CREATED items: %s", key, [x[: x.find("\n")] for x in created])
+        if len(unchanged) != 0:
             logging.info("%s UNCHANGED: %s", key, len(unchanged))
             logging.debug("%s UNCHANGED items: %s", key, unchanged)
         if len(updated) != 0 and key not in ["folders", "files"]:
