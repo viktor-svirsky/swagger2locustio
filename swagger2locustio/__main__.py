@@ -61,9 +61,10 @@ def main():
     )
     args = parser.parse_args()
     if args.verbose:
-        coloredlogs.install(level="DEBUG", fmt="%(asctime)s [%(levelname)s] %(filename)s: %(message)s")
+        loglevel = "DEBUG"
     else:
-        coloredlogs.install(level="INFO", fmt="%(asctime)s [%(levelname)s] %(filename)s: %(message)s")
+        loglevel = "INFO"
+    coloredlogs.install(level=loglevel, fmt="%(asctime)s [%(levelname)s] %(filename)s: %(message)s")
 
     main_start = log_result_named(args.results_path)
 
