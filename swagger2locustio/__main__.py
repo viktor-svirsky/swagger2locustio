@@ -173,18 +173,22 @@ def log_result_named(results_path):
         for filename in files:
             file_path = os.path.join(root, filename)
             with open(file_path, "r", encoding="utf-8") as file:
-                result["files"].append(file_path +": "+ file.read())
+                result["files"].append(file_path +"\n"+ file.read())
                 file.seek(0)
 
+                file_class = -1
+                file_function = -1
                 for line in file:
                     if line.find("class ") != -1:
                         result["classes"].append(file_path +": "+ line.lstrip())
+                        file_class = len(result["classes"])-1
                     elif line.find("def ") != -1:
                         result["functions"].append(file_path +": "+ line.lstrip())
-                    elif len(result["classes"]) > 0:
-                        result["classes"][-1] += line
-                    elif len(result["functions"]) > 0:
-                        result["functions"][-1] += line
+                        file_function = len(result["functions"])-1
+                    elif file_class >= 0:
+                        result["classes"][file_class] += line
+                    elif file_function >= 0:
+                        result["functions"][file_function] += line
 
     results_path = str(results_path)
     results_path_len = len(results_path)
