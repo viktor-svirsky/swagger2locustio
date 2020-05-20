@@ -123,8 +123,8 @@ def log_diff(start, end, results_path):
         start_key = set(items)
         end_key = set(end[key])
 
-        start_key_names = {x[: x.find("\n")] for x in start_key}
-        end_key_names = {x[: x.find("\n")] for x in end_key}
+        start_key_names = {x[: x.find("\n")] if x.find("\n") != -1 else x for x in start_key}
+        end_key_names = {x[: x.find("\n")] if x.find("\n") != -1 else x for x in end_key}
         result["created"] = list(end_key_names - start_key_names)
         result["deleted"] = list(start_key_names - end_key_names)
 
