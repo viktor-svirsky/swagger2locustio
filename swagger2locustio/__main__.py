@@ -168,42 +168,40 @@ def log_result_named(results_path):
         "classes": [],
         "functions": [],
     }
+    results_path = str(results_path)
 
     for root, dirs, files in os.walk(results_path):
         result["folders"] += [os.path.join(root, x) for x in dirs]
 
         for filename in files:
             file_path = os.path.join(root, filename)
+
+            results_path = str(results_path)
+            file_path_cleaned = str(file_path)
+            if file_path_cleaned[: len(results_path)] == results_path:
+                file_path_cleaned = file_path_cleaned[len(results_path) :]
+            else:
+                logging.warning("unknown path %s was mentioned", file_path_cleaned)
+
             with open(file_path, "r", encoding="utf-8") as file:
-                result["files"].append(file_path + "\n" + file.read())
+                result["files"].append(file_path_cleaned + "\n" + file.read())
                 file.seek(0)
 
                 file_class = -1
                 file_function = -1
                 for line in file:
                     if line.find("class ") != -1:
-                        result["classes"].append(file_path + ": " + line.lstrip())
+                        result["classes"].append(file_path_cleaned + ": " + line.lstrip())
                         file_class = len(result["classes"]) - 1
                         file_function = -1
                     elif line.find("def ") != -1:
-                        result["functions"].append(file_path + ": " + line.lstrip())
+                        result["functions"].append(file_path_cleaned + ": " + line.lstrip())
                         file_function = len(result["functions"]) - 1
 
                     if file_class >= 0:
                         result["classes"][file_class] += line
                     if file_function >= 0:
                         result["functions"][file_function] += line
-
-    results_path = str(results_path)
-    results_path_len = len(results_path)
-    for key in result.keys():
-        for index, file_path in enumerate(result[key]):
-            if file_path[:results_path_len] == results_path:
-                file_path = file_path[results_path_len:]
-            else:
-                logging.warning("unknown path %s was mentioned", file_path)
-
-            result[key][index] = file_path
 
     return result
 
