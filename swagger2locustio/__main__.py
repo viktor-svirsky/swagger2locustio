@@ -138,7 +138,7 @@ def log_diff(start, end, results_path):
         if len(unchanged) != 0:
             logging.info("%s UNCHANGED: %s", key, len(unchanged))
             logging.debug("%s UNCHANGED items: %s", key, unchanged)
-        if len(updated) != 0 and key not in ["folders", "files"]:
+        if len(updated) != 0 and key != "folders":
             logging.info("%s UPDATED: %s", key, len(updated))
             logging.debug("%s UPDATED items: %s", key, updated)
         if len(deleted) != 0:
