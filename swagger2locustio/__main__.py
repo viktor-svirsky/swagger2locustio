@@ -123,9 +123,11 @@ def log_diff(start, end, results_path):
         unchanged, updated = [], []
         for each_start in start_key:
             for each_end in end_key:
-                if each_start.find("\n") != -1 and each_end.find("\n") != -1 and each_start == each_end:  # classes and functions
+                if each_start.find("\n") != -1 and each_end.find("\n") != -1 and each_start == each_end:
+                    # classes and functions
                     unchanged.append(each_start[: each_start.find("\n")])
-                elif each_start == each_end:  # folders and files
+                elif each_start == each_end:
+                    # folders and files
                     unchanged.append(each_start)
                 elif each_start[: each_start.find("\n")] == each_end[: each_end.find("\n")]:
                     updated.append(each_start[: each_start.find("\n")])
