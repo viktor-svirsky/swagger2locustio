@@ -16,9 +16,9 @@ API_OPERATIONS = ("get", "post", "put", "patch", "delete", "head", "options", "t
 def main():
     """Launching function"""
 
-    parser = argparse.ArgumentParser(formatter_class=argparse.ArgumentDefaultsHelpFormatter)
-    parser.add_argument("-f", "--swagger-file", help="path to swagger file", required=True, type=Path)
-    parser.add_argument(
+    args = argparse.ArgumentParser(formatter_class=argparse.ArgumentDefaultsHelpFormatter)
+    args.add_argument("-f", "--swagger-file", help="path to swagger file", required=True, type=Path)
+    args.add_argument(
         "-r",
         "--results-path",
         help="path to store locustfile.py",
@@ -26,10 +26,10 @@ def main():
         default=Path("generated"),
         type=Path,
     )
-    parser.add_argument(
+    args.add_argument(
         "-v", "--verbose", help="verbose", required=False, action="store_true", default=False,
     )
-    parser.add_argument(
+    args.add_argument(
         "-s",
         "--strict-level",
         help="add paths with required params without default values to locust tests",
@@ -38,7 +38,7 @@ def main():
         type=int,
         default=2,
     )
-    parser.add_argument(
+    args.add_argument(
         "-o",
         "--operations",
         help="operations to use in api testing",
@@ -47,19 +47,19 @@ def main():
         choices=API_OPERATIONS,
         default=["get"],
     )
-    parser.add_argument(
+    args.add_argument(
         "--paths-white", "--pw", help="paths to use in api testing", required=False, nargs="+", type=str, default=[]
     )
-    parser.add_argument(
+    args.add_argument(
         "--paths-black", "--pb", help="paths not to use in api testing", required=False, nargs="+", type=str, default=[]
     )
-    parser.add_argument(
+    args.add_argument(
         "--tags-white", "--tw", help="tags to use in api testing", required=False, nargs="+", type=str, default=[]
     )
-    parser.add_argument(
+    args.add_argument(
         "--tags-black", "--tb", help="tags to use in api testing", required=False, nargs="+", type=str, default=[]
     )
-    args = parser.parse_args()
+    args = args.parse_args()
     if args.verbose:
         loglevel = "DEBUG"
     else:
