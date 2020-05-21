@@ -137,7 +137,7 @@ def log_diff(start, end, results_path):
         for result_key in result:
             result[result_key].sort()
             result_len = len(result[result_key])
-            if result_len != 0 and (key != "folders" or result_key != "updated"):
+            if result_len != 0:
                 logging.info("%s %s: %d", key.upper(), result_key, result_len)
                 if result_key != "unchanged":
                     logging.debug("%s %s items:", key.upper(), result_key)
@@ -161,9 +161,7 @@ def log_result(results_path):
     results_path = str(results_path)
 
     for root, dirs, files in os.walk(results_path):
-        for folder in dirs:
-            folder = os.path.join(root, folder)
-            result["folders"][folder] = folder
+        result["folders"].update({os.path.join(root, folder): "" for folder in dirs})
 
         for filename in files:
             if filename[-3:] != ".py":
