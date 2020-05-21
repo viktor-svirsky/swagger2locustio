@@ -122,23 +122,21 @@ def log_diff(start, end, results_path):
         }
 
         # CREATED / DELETED
-        # cutting off multiline to avoid issues with code that was changed
-        start_key_names = {x[: x.find("\n")] if "\n" in x else x for x in start_key}
-        end_key_names = {x[: x.find("\n")] if "\n" in x else x for x in end_key}
-        result["created"] = list(end_key_names - start_key_names)
-        result["deleted"] = list(start_key_names - end_key_names)
+        result["created"] = list(end_key - start_key)
+        result["deleted"] = list(start_key - end_key)
 
         # UNCHANGED / UPDATED
-        for each_start in start_key:
-            for each_end in end_key:
-                if each_start == each_end:
-                    # folder entries do not include \n, so last letter is being cut off
-                    result["unchanged"].append(
-                        each_start[: each_start.find("\n")] if "\n" in each_start else each_start
-                    )
-                elif each_start[: each_start.find("\n")] == each_end[: each_end.find("\n")]:
-                    result["updated"].append(each_start[: each_start.find("\n")])
-                # else is not used as we compare two lists which includes a lot of false entries
+        if type(end[key]) == type(list()):
+            result["unchanged"] = list(start_key.intersection(end_key))
+        elif type(end[key]) == type(dict()):
+            for each_start_key, each_start_data in items.items():
+                for each_end_key, each_end_data in end[key].items():
+                    if each_start_key == each_end_key and each_start_data == each_end_data:
+                        # folder entries do not include \n, so last letter is being cut off
+                        result["unchanged"].append(each_start_key)
+                    elif each_start_key == each_end_key:
+                        result["updated"].append(each_start_key)
+                    # else is not used as we compare two lists which includes a lot of false entries
 
         for result_key in result:
             result[result_key].sort()
@@ -160,9 +158,9 @@ def log_result(results_path):
 
     result = {
         "folders": [],
-        "files": [],
-        "classes": [],
-        "functions": [],
+        "files": {},
+        "classes": {},
+        "functions": {},
     }
     results_path = str(results_path)
 
@@ -183,23 +181,27 @@ def log_result(results_path):
                 logging.warning("unknown path %s was mentioned", file_path_cleaned)
 
             with open(file_path, "r", encoding="utf-8") as file:
-                result["files"].append(file_path_cleaned + "\n" + file.read())
+                result["files"][file_path_cleaned] = file.read()
                 file.seek(0)
 
-                file_class = -1
-                file_function = -1
+                file_class = ""
+                file_function = ""
                 for line in file:
                     if line.find("class ") != -1:
-                        result["classes"].append(file_path_cleaned + ": " + line.lstrip())
-                        file_class = len(result["classes"]) - 1
-                        file_function = -1
+                        name = file_path_cleaned + ": " + line.lstrip()
+                        name = name[: name.find("\n")] if "\n" in name else name
+                        result["classes"][name] = line.lstrip()
+                        file_class = name
+                        file_function = ""
                     elif line.find("def ") != -1:
-                        result["functions"].append(file_path_cleaned + ": " + line.lstrip())
-                        file_function = len(result["functions"]) - 1
+                        name = file_path_cleaned + ": " + line.lstrip()
+                        name = name[: name.find("\n")] if "\n" in name else name
+                        result["functions"][name] = line.lstrip()
+                        file_function = name
 
-                    if file_class >= 0:
+                    if file_class != "":
                         result["classes"][file_class] += line
-                    if file_function >= 0:
+                    if file_function != "":
                         result["functions"][file_function] += line
 
     return result
