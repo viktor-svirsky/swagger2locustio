@@ -139,10 +139,9 @@ def log_diff(start, end, results_path):
             result_len = len(result[result_key])
             if result_len != 0:
                 logging.info("%s %s: %d", key.upper(), result_key, result_len)
-                if result_key != "unchanged":
-                    logging.debug("%s %s items:", key.upper(), result_key)
-                    for each in result[result_key]:
-                        logging.debug("    %s", each)
+                logging.debug("%s %s items:", key.upper(), result_key)
+                for each in result[result_key]:
+                    logging.debug("    %s", each)
 
     logging.info("NOTE: Please make sure to fill in the constant files. Feel free to use helper functions to do it")
     logging.info("NOTE: We also advise to check authorization settings")
