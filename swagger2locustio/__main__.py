@@ -126,17 +126,13 @@ def log_diff(start, end, results_path):
         result["deleted"] = list(start_key - end_key)
 
         # UNCHANGED / UPDATED
-        if type(end[key]) == type(list()):
-            result["unchanged"] = list(start_key.intersection(end_key))
-        elif type(end[key]) == type(dict()):
-            for each_start_key, each_start_data in items.items():
-                for each_end_key, each_end_data in end[key].items():
-                    if each_start_key == each_end_key and each_start_data == each_end_data:
-                        # folder entries do not include \n, so last letter is being cut off
-                        result["unchanged"].append(each_start_key)
-                    elif each_start_key == each_end_key:
-                        result["updated"].append(each_start_key)
-                    # else is not used as we compare two lists which includes a lot of false entries
+        for each_start_key, each_start_data in items.items():
+            for each_end_key, each_end_data in end[key].items():
+                if each_start_key == each_end_key and each_start_data == each_end_data:
+                    result["unchanged"].append(each_start_key)
+                elif each_start_key == each_end_key:
+                    result["updated"].append(each_start_key)
+                # else is not used as we compare two lists which includes a lot of false entries
 
         for result_key in result:
             result[result_key].sort()
@@ -157,7 +153,7 @@ def log_result(results_path):
     """Function: log run results"""
 
     result = {
-        "folders": [],
+        "folders": {},
         "files": {},
         "classes": {},
         "functions": {},
@@ -165,7 +161,9 @@ def log_result(results_path):
     results_path = str(results_path)
 
     for root, dirs, files in os.walk(results_path):
-        result["folders"] += [os.path.join(root, x) for x in dirs]
+        for folder in dirs:
+            folder = os.path.join(root, folder)
+            result["folders"][folder] = folder
 
         for filename in files:
             if filename[-3:] != ".py":
