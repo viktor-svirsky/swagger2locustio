@@ -170,6 +170,9 @@ def log_result(results_path):
         result["folders"] += [os.path.join(root, x) for x in dirs]
 
         for filename in files:
+            if filename[-3:] != ".py":
+                continue
+
             file_path = os.path.join(root, filename)
 
             results_path = str(results_path)
