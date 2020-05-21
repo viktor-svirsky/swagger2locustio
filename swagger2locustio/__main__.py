@@ -66,7 +66,7 @@ def main():
         loglevel = "INFO"
     coloredlogs.install(level=loglevel, fmt="%(asctime)s [%(levelname)s] %(filename)s: %(message)s")
 
-    main_start = log_result_named(args.results_path)
+    main_start = log_result(args.results_path)
 
     log = logging.getLogger(__name__)
     log.debug("Command line args: %s", args)
@@ -105,7 +105,7 @@ def main():
     except ValueError as error:
         logging.error(error)
 
-    log_diff(main_start, log_result_named(args.results_path), args.results_path)
+    log_diff(main_start, log_result(args.results_path), args.results_path)
 
 
 def log_diff(start, end, results_path):
@@ -155,7 +155,7 @@ def log_diff(start, end, results_path):
     logging.debug("NOTE: All the paths mentioned use %s as root directory", results_path)
 
 
-def log_result_named(results_path):
+def log_result(results_path):
     """Function: log run results"""
 
     result = {
