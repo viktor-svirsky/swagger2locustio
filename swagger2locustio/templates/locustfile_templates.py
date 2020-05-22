@@ -40,6 +40,9 @@ class TaskSet(LocustTaskSet):
         return _url.format(**kwargs)
 
     def get_generic_name(self, file):
+        if os.environ.get("DEBUG"):
+            return None
+        
         return (
             "-".join(os.path.realpath(file).split("/")[-3:])
             .replace("_", "-")
