@@ -10,7 +10,7 @@ README = (HERE / "README.md").read_text()
 # This call to setup() does all the work
 setup(
     name="swagger2locustio",
-    version="0.0.3",
+    version="0.0.4",
     python_requires=">=3.7",
     description="Tool for testing API endpoints that have Open API / Swagger specifications using locustio",
     long_description=README,
