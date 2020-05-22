@@ -1,4 +1,4 @@
-"""Module: This is main module that actvates library"""
+"""Module: This is main module that activates library"""
 
 import json
 import argparse
@@ -7,6 +7,8 @@ from pathlib import Path
 
 import yaml
 import coloredlogs
+
+from swagger2locustio.utils import log_diff, log_result
 from swagger2locustio.strategy.base_strategy import BaseStrategy
 
 API_OPERATIONS = ("get", "post", "put", "patch", "delete", "head", "options", "trace")
@@ -15,9 +17,9 @@ API_OPERATIONS = ("get", "post", "put", "patch", "delete", "head", "options", "t
 def main():
     """Launching function"""
 
-    parser = argparse.ArgumentParser(formatter_class=argparse.ArgumentDefaultsHelpFormatter)
-    parser.add_argument("-f", "--swagger-file", help="path to swagger file", required=True, type=Path)
-    parser.add_argument(
+    args = argparse.ArgumentParser(formatter_class=argparse.ArgumentDefaultsHelpFormatter)
+    args.add_argument("-f", "--swagger-file", help="path to swagger file", required=True, type=Path)
+    args.add_argument(
         "-r",
         "--results-path",
         help="path to store locustfile.py",
@@ -25,19 +27,10 @@ def main():
         default=Path("generated"),
         type=Path,
     )
-    parser.add_argument(
+    args.add_argument(
         "-v", "--verbose", help="verbose", required=False, action="store_true", default=False,
     )
-    parser.add_argument(
-        "-s",
-        "--strict-level",
-        help="add paths with required params without default values to locust tests",
-        required=False,
-        choices=(0, 1, 2),
-        type=int,
-        default=2,
-    )
-    parser.add_argument(
+    args.add_argument(
         "-o",
         "--operations",
         help="operations to use in api testing",
@@ -46,24 +39,27 @@ def main():
         choices=API_OPERATIONS,
         default=["get"],
     )
-    parser.add_argument(
+    args.add_argument(
         "--paths-white", "--pw", help="paths to use in api testing", required=False, nargs="+", type=str, default=[]
     )
-    parser.add_argument(
+    args.add_argument(
         "--paths-black", "--pb", help="paths not to use in api testing", required=False, nargs="+", type=str, default=[]
     )
-    parser.add_argument(
+    args.add_argument(
         "--tags-white", "--tw", help="tags to use in api testing", required=False, nargs="+", type=str, default=[]
     )
-    parser.add_argument(
+    args.add_argument(
         "--tags-black", "--tb", help="tags to use in api testing", required=False, nargs="+", type=str, default=[]
     )
-    args = parser.parse_args()
+    args = args.parse_args()
     if args.verbose:
         loglevel = "DEBUG"
     else:
         loglevel = "INFO"
     coloredlogs.install(level=loglevel, fmt="%(asctime)s [%(levelname)s] %(filename)s: %(message)s")
+
+    main_start = log_result(args.results_path)
+
     log = logging.getLogger(__name__)
     log.debug("Command line args: %s", args)
     swagger_file = args.swagger_file
@@ -95,11 +91,13 @@ def main():
             swagger_data = yaml.safe_load(file)
     else:
         raise ValueError("Incorrect file format")
-    swagger_strategy = BaseStrategy(swagger_data, args.results_path, mask, args.strict_level)
+    swagger_strategy = BaseStrategy(swagger_data, args.results_path, mask)
     try:
         swagger_strategy.process()
     except ValueError as error:
         logging.error(error)
+
+    log_diff(main_start, log_result(args.results_path), args.results_path)
 
 
 if __name__ == "__main__":

@@ -17,7 +17,7 @@ PATH_PARAMS_PATTERN = re.compile(r"{.*?}", re.UNICODE)
 IDENTIFIER_PATTERN = re.compile(r"[^\d\w/]", re.UNICODE)
 
 
-@dataclass(frozen=True)
+@dataclass(frozen=True, order=True)
 class Constant:
     """Data Class: Constant"""
 
@@ -47,16 +47,41 @@ class TestClass:
 class BaseGenerator:
     """Class: Base Generator"""
 
-    def __init__(self, results_path: Path, strict_level: int):
-        self.strict_level = strict_level
+    def __init__(self, results_path: Path):
         self.test_classes_mapping: Dict[str, TestClass] = {}
         self.results_path = results_path
-        self.constants_path = Path("constants")
-        self.task_sets_path = Path("tasksets")
-        self.tests_path = self.task_sets_path / "generated_tests"
-
-        (self.results_path / self.constants_path).mkdir(exist_ok=True, parents=True)
+        self.apps_path = Path("apps")
+        constants_path = Path("constants")
+        self.app_name = self.get_app_name()
+        self.current_app_path = self.apps_path / self.app_name
+        self.tests_path = self.current_app_path / "tasksets" / "generated_tests"
+        self.current_app_constants_path = self.current_app_path / "constants"
         (self.results_path / self.tests_path).mkdir(exist_ok=True, parents=True)
+        (self.results_path / constants_path).mkdir(exist_ok=True, parents=True)
+        (self.results_path / self.current_app_constants_path).mkdir(exist_ok=True, parents=True)
+        (self.results_path / constants_path / "base_constants.py").write_text(
+            constants_templates.CONSTANTS_BASE_FILE.render()
+        )
+        (self.results_path / self.apps_path / "helper.py").write_text(helpers_templates.HELPER_CLASS.render())
+
+    def get_app_name(self):
+        """Method: returns app name"""
+        apps = []
+        counter = 0
+        dir_name = f"app{counter}"
+        while (self.results_path / self.apps_path / dir_name).exists():
+            apps.append(dir_name)
+            counter += 1
+            dir_name = f"app{counter}"
+        LOG.info("Existed apps: %s", apps)
+        prompt = f"Type name of created app - to update it, or name of new app, or press Enter to use `{dir_name}`:\n"
+        user_input = input(prompt)
+        while user_input != "" and not user_input.isidentifier():
+            LOG.warning("Name should be valid python identifier")
+            user_input = input(prompt)
+        if user_input != "":
+            dir_name = user_input
+        return dir_name
 
     def generate_locustfiles(self, swagger_data: dict) -> None:
         """Method: generate locustfiles"""
@@ -70,14 +95,15 @@ class BaseGenerator:
             if not methods_count:
                 continue
             class_methods = []
-            class_constants = set()
+            class_constants = []
             for test_method in test_class.test_methods:
                 class_methods.append(test_method.method_data)
-                class_constants.update(test_method.constants)
+                class_constants.extend(test_method.constants)
             methods_str = "".join(class_methods)
             class_file_path = self.results_path / self.tests_path / test_class.file_path
             class_file_path.mkdir(parents=True, exist_ok=True)
             file_name = f"{test_class.file_name}.py"
+            class_constants = list(sorted(set(class_constants)))
             constants_str = ", ".join([constant.name for constant in class_constants])
             import_path = str(self.tests_path / test_class.file_path / test_class.file_name).replace("/", ".")
             test_classes_imports.append(f"from {import_path} import {test_class.class_name}")
@@ -88,24 +114,23 @@ class BaseGenerator:
                     test_methods=methods_str,
                     class_name=test_class.class_name,
                     constants=constants_str,
+                    app_name=self.app_name,
                 )
             )
             if class_constants:
-                (self.results_path / self.constants_path / file_name).write_text(
+                (self.results_path / self.current_app_constants_path / file_name).write_text(
                     constants_templates.CONSTANTS_FILE.render(constants=class_constants)
                 )
-        (self.results_path / "locustfile.py").write_text(l_templates.MAIN_LOCUSTFILE.render(host=swagger_data["host"],))
-        (self.results_path / self.task_sets_path / "base.py").write_text(
-            l_templates.BASE_TASKSET_FILE.render(security_cases=security_cases,)
+        (self.results_path / "locustfile.py").write_text(
+            l_templates.MAIN_LOCUSTFILE.render(host=swagger_data["host"], app_name=self.app_name,)
         )
-        (self.results_path / self.task_sets_path / "generated_taskset.py").write_text(
+        (self.results_path / self.current_app_path / "generated_taskset.py").write_text(
             l_templates.GENERATED_TASKSET_FILE.render(
                 test_classes_names=test_classes_inheritance, test_classes_imports=test_classes_imports,
             )
         )
-        (self.results_path / self.task_sets_path / "helper.py").write_text(helpers_templates.HELPER_CLASS.render())
-        (self.results_path / self.constants_path / "base_constants.py").write_text(
-            constants_templates.CONSTANTS_BASE_FILE.render()
+        (self.results_path / self.apps_path / "base.py").write_text(
+            l_templates.BASE_TASKSET_FILE.render(security_cases=security_cases,)
         )
         LOG.info("%s test methods were created successfully", len(test_classes_inheritance))
 
