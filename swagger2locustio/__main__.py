@@ -1,6 +1,5 @@
-"""Module: This is main module that actvates library"""
+"""Module: This is main module that activates library"""
 
-import os
 import json
 import argparse
 import logging
@@ -8,6 +7,8 @@ from pathlib import Path
 
 import yaml
 import coloredlogs
+
+from swagger2locustio.utils import log_diff, log_result
 from swagger2locustio.strategy.base_strategy import BaseStrategy
 
 API_OPERATIONS = ("get", "post", "put", "patch", "delete", "head", "options", "trace")
@@ -28,15 +29,6 @@ def main():
     )
     args.add_argument(
         "-v", "--verbose", help="verbose", required=False, action="store_true", default=False,
-    )
-    args.add_argument(
-        "-s",
-        "--strict-level",
-        help="add paths with required params without default values to locust tests",
-        required=False,
-        choices=(0, 1, 2),
-        type=int,
-        default=2,
     )
     args.add_argument(
         "-o",
@@ -99,107 +91,13 @@ def main():
             swagger_data = yaml.safe_load(file)
     else:
         raise ValueError("Incorrect file format")
-    swagger_strategy = BaseStrategy(swagger_data, args.results_path, mask, args.strict_level)
+    swagger_strategy = BaseStrategy(swagger_data, args.results_path, mask)
     try:
         swagger_strategy.process()
     except ValueError as error:
         logging.error(error)
 
     log_diff(main_start, log_result(args.results_path), args.results_path)
-
-
-def log_diff(start, end, results_path):
-    """Function: log difference"""
-
-    for key, items in start.items():
-        start_key = set(items)
-        end_key = set(end[key])
-        result = {
-            "created": [],
-            "unchanged": [],
-            "updated": [],
-            "deleted": [],
-        }
-
-        # CREATED / DELETED
-        result["created"] = list(end_key - start_key)
-        result["deleted"] = list(start_key - end_key)
-
-        # UNCHANGED / UPDATED
-        for each_start_key, each_start_data in items.items():
-            for each_end_key, each_end_data in end[key].items():
-                if each_start_key == each_end_key and each_start_data == each_end_data:
-                    result["unchanged"].append(each_start_key)
-                elif each_start_key == each_end_key:
-                    result["updated"].append(each_start_key)
-                # else is not used as we compare two lists which includes a lot of false entries
-
-        for result_key in result:
-            result[result_key].sort()
-            result_len = len(result[result_key])
-            if result_len != 0:
-                logging.info("%s %s: %d", key.upper(), result_key, result_len)
-                logging.debug("%s %s items:", key.upper(), result_key)
-                for each in result[result_key]:
-                    logging.debug("    %s", each)
-
-    logging.info("NOTE: Please make sure to fill in the constant files. Feel free to use helper functions to do it")
-    logging.info("NOTE: We also advise to check authorization settings")
-    logging.debug("NOTE: All the paths mentioned use %s as root directory", results_path)
-
-
-def log_result(results_path):
-    """Function: log run results"""
-
-    result = {
-        "folders": {},
-        "files": {},
-        "classes": {},
-        "functions": {},
-    }
-    results_path = str(results_path)
-
-    for root, dirs, files in os.walk(results_path):
-        result["folders"].update({os.path.join(root, folder): "" for folder in dirs})
-
-        for filename in files:
-            if filename[-3:] != ".py":
-                continue
-
-            file_path = os.path.join(root, filename)
-
-            results_path = str(results_path)
-            file_path_cleaned = str(file_path)
-            if file_path_cleaned[: len(results_path)] == results_path:
-                file_path_cleaned = file_path_cleaned[len(results_path) :]
-            else:
-                logging.warning("unknown path %s was mentioned", file_path_cleaned)
-
-            with open(file_path, "r", encoding="utf-8") as file:
-                result["files"][file_path_cleaned] = file.read()
-                file.seek(0)
-
-                file_class = ""
-                file_function = ""
-                for line in file:
-                    if line.find("class ") != -1:
-                        name = file_path_cleaned + ": " + line.lstrip()
-                        name = name[: name.find("\n")] if "\n" in name else name
-                        result["classes"][name] = line.lstrip()
-                        file_class = name
-                        file_function = ""
-                    elif line.find("def ") != -1:
-                        name = file_path_cleaned + ": " + line.lstrip()
-                        name = name[: name.find("\n")] if "\n" in name else name
-                        result["functions"][name] = line.lstrip()
-                        file_function = name
-
-                    if file_class != "":
-                        result["classes"][file_class] += line
-                    if file_function != "":
-                        result["functions"][file_function] += line
-
-    return result
 
 
 if __name__ == "__main__":
