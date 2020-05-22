@@ -40,7 +40,7 @@ jobs:
         mypy swagger2locustio --config-file=setup.cfg
     - name: Check with bandit
       run: |
-        bandit -r swagger2locustio
+        bandit -r --python3 swagger2locustio
     - name: Test with pytest
       run: |
         pytest swagger2locustio/tests

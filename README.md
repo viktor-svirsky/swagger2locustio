@@ -55,7 +55,7 @@ pip install swagger2locustio
 #### Command line options
 
 ```
-usage: swagger2locustio [-h] -f SWAGGER_FILE [-r RESULTS_PATH] [-v] [-s {0,1,2}]
+usage: swagger2locustio [-h] -f SWAGGER_FILE [-r RESULTS_PATH] [-v]
                         [-o {get,post,put,patch,delete,head,options,trace} [{get,post,put,patch,delete,head,options,trace} ...]]
                         [--paths-white PATHS_WHITE [PATHS_WHITE ...]] [--paths-black PATHS_BLACK [PATHS_BLACK ...]] [--tags-white TAGS_WHITE [TAGS_WHITE ...]]
                         [--tags-black TAGS_BLACK [TAGS_BLACK ...]]
@@ -67,8 +67,6 @@ optional arguments:
   -r RESULTS_PATH, --results-path RESULTS_PATH
                         path to store locustfile.py (default: generated)
   -v, --verbose         verbose (default: False)
-  -s {0,1,2}, --strict-level {0,1,2}
-                        add paths with required params without default values to locust tests (default: 2)
   -o {get,post,put,patch,delete,head,options,trace} [{get,post,put,patch,delete,head,options,trace} ...], --operations {get,post,put,patch,delete,head,options,trace} [{get,post,put,patch,delete,head,options,trace} ...]
                         operations to use in api testing (default: ['get'])
   --paths-white PATHS_WHITE [PATHS_WHITE ...], --pw PATHS_WHITE [PATHS_WHITE ...]
