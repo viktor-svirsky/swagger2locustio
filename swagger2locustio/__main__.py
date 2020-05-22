@@ -30,15 +30,6 @@ def main():
         "-v", "--verbose", help="verbose", required=False, action="store_true", default=False,
     )
     args.add_argument(
-        "-s",
-        "--strict-level",
-        help="add paths with required params without default values to locust tests",
-        required=False,
-        choices=(0, 1, 2),
-        type=int,
-        default=2,
-    )
-    args.add_argument(
         "-o",
         "--operations",
         help="operations to use in api testing",
@@ -99,7 +90,7 @@ def main():
             swagger_data = yaml.safe_load(file)
     else:
         raise ValueError("Incorrect file format")
-    swagger_strategy = BaseStrategy(swagger_data, args.results_path, mask, args.strict_level)
+    swagger_strategy = BaseStrategy(swagger_data, args.results_path, mask)
     try:
         swagger_strategy.process()
     except ValueError as error:

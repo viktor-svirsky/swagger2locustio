@@ -5,7 +5,7 @@ from jinja2 import Template
 MAIN_LOCUSTFILE = Template(
     """from locust import HttpLocust
 
-from tasksets.generated_taskset import GeneratedTaskSet
+from apps.{{ app_name }}.generated_taskset import GeneratedTaskSet
 
 
 class TestUser(HttpLocust):
@@ -22,7 +22,8 @@ BASE_TASKSET_FILE = Template(
 from base64 import b64encode
 from locust import TaskSet as LocustTaskSet
 
-from tasksets.helper import Helper
+from constants.base_constants import API_PREFIX
+from apps.helper import Helper
 
 
 class TaskSet(LocustTaskSet):
@@ -37,12 +38,11 @@ class TaskSet(LocustTaskSet):
         pass{% else %}{{ security_cases }}{% endif %}
 
     def url(self, _url: str, **kwargs):
-        return _url.format(**kwargs)
+        return API_PREFIX + _url.format(**kwargs)
 
     def get_generic_name(self, file):
         if os.environ.get("DEBUG"):
             return None
-        
         return (
             "-".join(os.path.realpath(file).split("/")[-3:])
             .replace("_", "-")
@@ -53,9 +53,8 @@ class TaskSet(LocustTaskSet):
 )
 
 GENERATED_TASKSET_FILE = Template(
-    """from tasksets.base import TaskSet
-from tasksets.helper import Helper
-from constants.base_constants import API_PREFIX
+    """from apps.base import TaskSet
+from apps.helper import Helper
 {% for class_import in test_classes_imports %}{{ class_import }}
 {% endfor %}
 
@@ -71,10 +70,9 @@ class GeneratedTaskSet(
 TEST_CLASS_FILE = Template(
     """from locust import task
 
-from tasksets.base import TaskSet
-from tasksets.helper import Helper
-from constants.base_constants import API_PREFIX
-{% if constants %}from constants.{{ file_name }} import {{ constants }}{% endif %}
+from apps.base import TaskSet
+from apps.helper import Helper
+{% if constants %}from apps.{{ app_name }}.constants.{{ file_name }} import {{ constants }}{% endif %}
 
 
 class {{ class_name }}(TaskSet):
@@ -89,7 +87,7 @@ FUNC = Template(
     def {{ func_name }}(self):
         self.client.{{ method }}(
             name=self.get_generic_name(__file__),
-            url=self.url("{api_prefix}{{ path }}".format(api_prefix=API_PREFIX{{ path_params }})),
+            url=self.url("{{ path }}"{{ path_params }}),
             params={{ query_params }},
             headers={{ header_params }},
             cookies={{ cookie_params }},
