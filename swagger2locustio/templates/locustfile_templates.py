@@ -3,14 +3,15 @@
 from jinja2 import Template
 
 MAIN_LOCUSTFILE = Template(
-    """from locust import HttpLocust, between
+    """from locust import HttpLocust
 
 from tasksets.generated_taskset import GeneratedTaskSet
 
 
 class TestUser(HttpLocust):
     task_set = GeneratedTaskSet
-    wait_time = between(5.0, 9.0)
+    min_wait = 5 * 1000
+    max_wait = 10 * 1000
     host = "{{ host }}"
 
 """
