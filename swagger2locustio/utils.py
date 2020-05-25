@@ -21,10 +21,11 @@ def changed_files_user_check(existed_files, new_files, results_path):
                 LOG.warning("NOTE: You should include imports to all apps tasksets yourself in `locustfile.py`")
 
 
-def log_diff(start, end, results_path):
+def log_diff(start, end, results_path, overwrite):
     """Function: log difference"""
 
-    changed_files_user_check(start["files"], end["files"], results_path)
+    if not overwrite:
+        changed_files_user_check(start["files"], end["files"], results_path)
 
     for key, items in start.items():
         start_key = set(items)

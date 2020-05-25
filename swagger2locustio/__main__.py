@@ -51,6 +51,9 @@ def main():
     args.add_argument(
         "--tags-black", "--tb", help="tags to use in api testing", required=False, nargs="+", type=str, default=[]
     )
+    args.add_argument(
+        "--overwrite", help="overwrite files automatically", required=False, action="store_true", default=False
+    )
     args = args.parse_args()
     if args.verbose:
         loglevel = "DEBUG"
@@ -97,7 +100,7 @@ def main():
     except ValueError as error:
         logging.error(error)
 
-    log_diff(main_start, log_result(args.results_path), args.results_path)
+    log_diff(main_start, log_result(args.results_path), args.results_path, args.overwrite)
 
 
 if __name__ == "__main__":
