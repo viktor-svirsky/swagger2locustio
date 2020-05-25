@@ -48,9 +48,8 @@ def log_diff(start, end, results_path, overwrite):
 
         for result_key in result:
             result[result_key].sort()
-            result_len = len(result[result_key])
-            if result_len != 0:
-                LOG.info("%s %s: %d", key.upper(), result_key, result_len)
+            if len(result[result_key]) != 0:
+                LOG.info("%s %s: %d", key.upper(), result_key, len(result[result_key]))
                 LOG.debug("%s %s items:", key.upper(), result_key)
                 for each in result[result_key]:
                     LOG.debug("    %s", each)
