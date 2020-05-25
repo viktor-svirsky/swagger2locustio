@@ -51,6 +51,7 @@ def main():
     args.add_argument(
         "--tags-black", "--tb", help="tags to use in api testing", required=False, nargs="+", type=str, default=[]
     )
+    args.add_argument("-n", "--app-name", help="application name", required=False, type=str, default="")
     args.add_argument(
         "--overwrite", help="overwrite files automatically", required=False, action="store_true", default=False
     )
@@ -94,7 +95,7 @@ def main():
             swagger_data = yaml.safe_load(file)
     else:
         raise ValueError("Incorrect file format")
-    swagger_strategy = BaseStrategy(swagger_data, args.results_path, mask)
+    swagger_strategy = BaseStrategy(swagger_data, args.results_path, mask, args.app_name)
     try:
         swagger_strategy.process()
     except ValueError as error:

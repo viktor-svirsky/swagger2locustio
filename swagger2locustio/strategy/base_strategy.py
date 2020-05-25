@@ -12,10 +12,10 @@ from swagger2locustio.generators.base_generator import BaseGenerator
 class BaseStrategy:
     """Class: Base Strategy"""
 
-    def __init__(self, file_content: dict, results_path: Path, mask: Dict[str, Set[str]]):
+    def __init__(self, file_content: dict, results_path: Path, mask: Dict[str, Set[str]], app_name: str):
         self.swagger_file_content = file_content
         self.mask = mask
-        self.generator = BaseGenerator(results_path)
+        self.generator = BaseGenerator(results_path, app_name)
         results_path.mkdir(exist_ok=True)
 
     def get_specific_version_parser(self) -> SwaggerBaseParser:
