@@ -51,7 +51,7 @@ def main():
     args.add_argument(
         "--tags-black", "--tb", help="tags to use in api testing", required=False, nargs="+", type=str, default=[]
     )
-    args.add_argument("-n", "--app-name", help="application name", required=False, type=str, default="")
+    args.add_argument("-a", "--app-name", help="application name", required=False, type=str)
     args.add_argument(
         "--overwrite", help="overwrite files automatically", required=False, action="store_true", default=False
     )
