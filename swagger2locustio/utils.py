@@ -31,13 +31,11 @@ def log_diff(start, end, results_path, overwrite_confirm, overwrite_deny):
         end = log_result(results_path)
 
     for key, items in start.items():
-        start_key = set(items)
-        end_key = set(end[key])
         result = {
-            "created": list(end_key - start_key),
+            "created": list(set(end[key]) - set(items)),
             "unchanged": [],
             "updated": [],
-            "deleted": list(start_key - end_key),
+            "deleted": list(set(items) - set(end[key])),
         }
 
         # UNCHANGED / UPDATED
