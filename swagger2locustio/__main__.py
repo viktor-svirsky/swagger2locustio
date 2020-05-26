@@ -53,10 +53,20 @@ def main():
     )
     args.add_argument("-a", "--app-name", help="application name", required=False, type=str)
     args.add_argument(
-        "-y", "--overwrite-confirm", help="overwrite files: confirm. Update existing files without asking", required=False, action="store_true", default=False
+        "-y",
+        "--overwrite-confirm",
+        help="overwrite files: confirm. Update existing files without asking",
+        required=False,
+        action="store_true",
+        default=False,
     )
     args.add_argument(
-        "-n", "--overwrite-deny", help="overwrite files: deny. Do not allow to overwrite old files", required=False, action="store_true", default=False
+        "-n",
+        "--overwrite-deny",
+        help="overwrite files: deny. Do not allow to overwrite old files",
+        required=False,
+        action="store_true",
+        default=False,
     )
     args = args.parse_args()
     if args.verbose:
