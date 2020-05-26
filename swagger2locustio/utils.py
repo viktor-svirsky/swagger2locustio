@@ -7,25 +7,28 @@ from pathlib import Path
 LOG = logging.getLogger(__name__)
 
 
-def changed_files_user_check(existed_files, new_files, results_path):
+def changed_files_user_check(existed_files, new_files, results_path, overwrite_deny):
     """Function: changed files user check"""
 
     for file_name, old_data in existed_files.items():
         new_data = new_files.get(file_name, "")
         if old_data != new_data:
-            LOG.warning("%s file has been changed. Do you want to overwrite it? [Y/any key]", file_name)
-            user_input = input()
-            if user_input not in ("y", "Y"):
+            user_input = ""
+            if not overwrite_deny:
+                LOG.warning("%s file has been changed. Do you want to overwrite it? [Y/any key]", file_name)
+                user_input = input()
+            if user_input.lower() == "y" or overwrite_deny:
                 Path(str(results_path) + file_name).write_text(old_data)
             if file_name == "/locustfile.py":
                 LOG.warning("NOTE: You should include imports to all apps tasksets yourself in `locustfile.py`")
 
 
-def log_diff(start, end, results_path, overwrite):
+def log_diff(start, end, results_path, overwrite_confirm, overwrite_deny):
     """Function: log difference"""
 
-    if not overwrite:
-        changed_files_user_check(start["files"], end["files"], results_path)
+    if not overwrite_confirm:
+        changed_files_user_check(start["files"], end["files"], results_path, overwrite_deny)
+        end = log_result(results_path)
 
     for key, items in start.items():
         start_key = set(items)

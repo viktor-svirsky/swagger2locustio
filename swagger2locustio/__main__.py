@@ -53,7 +53,10 @@ def main():
     )
     args.add_argument("-a", "--app-name", help="application name", required=False, type=str)
     args.add_argument(
-        "--overwrite", help="overwrite files automatically", required=False, action="store_true", default=False
+        "-y", "--overwrite-confirm", help="overwrite files: confirm. Update existing files without asking", required=False, action="store_true", default=False
+    )
+    args.add_argument(
+        "-n", "--overwrite-deny", help="overwrite files: deny. Do not allow to overwrite old files", required=False, action="store_true", default=False
     )
     args = args.parse_args()
     if args.verbose:
@@ -78,6 +81,9 @@ def main():
     if tags and not_tags:
         raise ValueError("Both `tags` and not `not_tags` arguments specified")
 
+    if args.overwrite_confirm and args.overwrite_deny:
+        raise ValueError("Both `--overwrite-confirm` and not `--overwrite-deny` arguments specified")
+
     mask = {
         "operations_white_list": set(args.operations),
         "paths_white_list": set(paths),
@@ -101,7 +107,7 @@ def main():
     except ValueError as error:
         logging.error(error)
 
-    log_diff(main_start, log_result(args.results_path), args.results_path, args.overwrite)
+    log_diff(main_start, log_result(args.results_path), args.results_path, args.overwrite_confirm, args.overwrite_deny)
 
 
 if __name__ == "__main__":
