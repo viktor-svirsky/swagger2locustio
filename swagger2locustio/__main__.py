@@ -94,6 +94,9 @@ def main():
     if args.overwrite_confirm and args.overwrite_deny:
         raise ValueError("Both `--overwrite-confirm` and not `--overwrite-deny` arguments specified")
 
+    if not args.app_name.isidentifier():
+        raise ValueError(f"{ args.app_name } is not a valid python identifier")
+
     mask = {
         "operations_white_list": set(args.operations),
         "paths_white_list": set(paths),
