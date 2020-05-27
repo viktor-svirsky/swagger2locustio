@@ -59,6 +59,7 @@ usage: swagger2locustio [-h] -f SWAGGER_FILE [-r RESULTS_PATH] [-v]
                         [-o {get,post,put,patch,delete,head,options,trace} [{get,post,put,patch,delete,head,options,trace} ...]]
                         [--paths-white PATHS_WHITE [PATHS_WHITE ...]] [--paths-black PATHS_BLACK [PATHS_BLACK ...]] [--tags-white TAGS_WHITE [TAGS_WHITE ...]]
                         [--tags-black TAGS_BLACK [TAGS_BLACK ...]]
+                        [-a APP_NAME] [-y] [-n]
 
 optional arguments:
   -h, --help            show this help message and exit
@@ -77,6 +78,11 @@ optional arguments:
                         tags to use in api testing (default: [])
   --tags-black TAGS_BLACK [TAGS_BLACK ...], --tb TAGS_BLACK [TAGS_BLACK ...]
                         tags to use in api testing (default: [])
+  -a APP_NAME, --app-name APP_NAME
+                        application name (default: None)
+  -y, --overwrite-confirm
+                        overwrite files: confirm. Update existing files without asking (default: False)
+  -n, --overwrite-deny  overwrite files: deny. Do not allow to overwrite old files (default: False)
 ```
 
 ## Contributing
