@@ -84,13 +84,13 @@ def main():
     tags = [tag.lower() for tag in args.tags_white]
     not_tags = [tag.lower() for tag in args.tags_black]
     if paths and not_paths:
-        raise ValueError("Both `paths` and not `paths` arguments specified")
+        raise ValueError("Both `paths` and `not_paths` arguments specified")
 
     if tags and not_tags:
-        raise ValueError("Both `tags` and not `not_tags` arguments specified")
+        raise ValueError("Both `tags` and `not_tags` arguments specified")
 
     if args.overwrite_confirm and args.overwrite_deny:
-        raise ValueError("Both `--overwrite-confirm` and not `--overwrite-deny` arguments specified")
+        raise ValueError("Both `--overwrite-confirm` and `--overwrite-deny` arguments specified")
 
     if not args.app_name.isidentifier():
         raise ValueError(f"{ args.app_name } is not a valid python identifier")
