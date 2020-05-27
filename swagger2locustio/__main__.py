@@ -79,8 +79,6 @@ def main():
 
     log = logging.getLogger(__name__)
     log.debug("Command line args: %s", args)
-    swagger_file = args.swagger_file
-    ext = swagger_file.suffix
     paths = [path.lower() for path in args.paths_white]
     not_paths = [path.lower() for path in args.paths_black]
     tags = [tag.lower() for tag in args.tags_white]
@@ -106,11 +104,11 @@ def main():
     }
     log.debug("Mask: %s", mask)
 
-    if ext == ".json":
-        with open(swagger_file) as file:
+    if args.swagger_file.suffix == ".json":
+        with open(args.swagger_file) as file:
             swagger_data = json.load(file)
-    elif ext in (".yaml", ".yml"):
-        with open(swagger_file) as file:
+    elif args.swagger_file.suffix in (".yaml", ".yml"):
+        with open(args.swagger_file) as file:
             swagger_data = yaml.safe_load(file)
     else:
         raise ValueError("Incorrect file format")
