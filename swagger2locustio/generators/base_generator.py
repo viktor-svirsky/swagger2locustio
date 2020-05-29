@@ -47,12 +47,12 @@ class TestClass:
 class BaseGenerator:
     """Class: Base Generator"""
 
-    def __init__(self, results_path: Path):
+    def __init__(self, results_path: Path, app_name: str = ""):
         self.test_classes_mapping: Dict[str, TestClass] = {}
         self.results_path = results_path
         self.apps_path = Path("apps")
         constants_path = Path("constants")
-        self.app_name = self.get_app_name()
+        self.app_name = app_name if app_name else self.get_app_name()
         self.current_app_path = self.apps_path / self.app_name
         self.tests_path = self.current_app_path / "tasksets" / "generated_tests"
         self.current_app_constants_path = self.current_app_path / "constants"
@@ -66,6 +66,7 @@ class BaseGenerator:
 
     def get_app_name(self):
         """Method: returns app name"""
+
         apps = []
         counter = 0
         dir_name = f"app{counter}"

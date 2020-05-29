@@ -51,6 +51,23 @@ def main():
     args.add_argument(
         "--tags-black", "--tb", help="tags to use in api testing", required=False, nargs="+", type=str, default=[]
     )
+    args.add_argument("-a", "--app-name", help="application name", required=False, type=str)
+    args.add_argument(
+        "-y",
+        "--overwrite-confirm",
+        help="overwrite files: confirm. Update existing files without asking",
+        required=False,
+        action="store_true",
+        default=False,
+    )
+    args.add_argument(
+        "-n",
+        "--overwrite-deny",
+        help="overwrite files: deny. Do not allow to overwrite old files",
+        required=False,
+        action="store_true",
+        default=False,
+    )
     args = args.parse_args()
     if args.verbose:
         loglevel = "DEBUG"
@@ -62,17 +79,21 @@ def main():
 
     log = logging.getLogger(__name__)
     log.debug("Command line args: %s", args)
-    swagger_file = args.swagger_file
-    ext = swagger_file.suffix
     paths = [path.lower() for path in args.paths_white]
     not_paths = [path.lower() for path in args.paths_black]
     tags = [tag.lower() for tag in args.tags_white]
     not_tags = [tag.lower() for tag in args.tags_black]
     if paths and not_paths:
-        raise ValueError("Both `paths` and not `paths` arguments specified")
+        raise ValueError("Both `paths` and `not_paths` arguments specified")
 
     if tags and not_tags:
-        raise ValueError("Both `tags` and not `not_tags` arguments specified")
+        raise ValueError("Both `tags` and `not_tags` arguments specified")
+
+    if args.overwrite_confirm and args.overwrite_deny:
+        raise ValueError("Both `--overwrite-confirm` and `--overwrite-deny` arguments specified")
+
+    if not args.app_name.isidentifier():
+        raise ValueError(f"{ args.app_name } is not a valid python identifier")
 
     mask = {
         "operations_white_list": set(args.operations),
@@ -83,21 +104,21 @@ def main():
     }
     log.debug("Mask: %s", mask)
 
-    if ext == ".json":
-        with open(swagger_file) as file:
+    if args.swagger_file.suffix == ".json":
+        with open(args.swagger_file) as file:
             swagger_data = json.load(file)
-    elif ext in (".yaml", ".yml"):
-        with open(swagger_file) as file:
+    elif args.swagger_file.suffix in (".yaml", ".yml"):
+        with open(args.swagger_file) as file:
             swagger_data = yaml.safe_load(file)
     else:
         raise ValueError("Incorrect file format")
-    swagger_strategy = BaseStrategy(swagger_data, args.results_path, mask)
+    swagger_strategy = BaseStrategy(swagger_data, args.results_path, mask, args.app_name)
     try:
         swagger_strategy.process()
     except ValueError as error:
         logging.error(error)
 
-    log_diff(main_start, log_result(args.results_path), args.results_path)
+    log_diff(main_start, log_result(args.results_path), args.results_path, args.overwrite_confirm, args.overwrite_deny)
 
 
 if __name__ == "__main__":
