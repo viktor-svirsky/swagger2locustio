@@ -3,6 +3,6 @@ black==19.10b0
 pylint==2.5.2
 pytest==5.4.2
 pytest-cov==2.8.1
-coveralls==2.0.0
+coveralls==2.1.1
 bandit==1.6.2
 mypy==0.770
