@@ -31,7 +31,7 @@ setup(
     zip_safe=False,
     include_package_data=True,
     install_requires=[
-        "Jinja2==2.11.2",
+        "Jinja2==2.11.3",
         "PyYAML==5.3.1",
         "coloredlogs==14.0"
     ],
