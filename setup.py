@@ -32,7 +32,7 @@ setup(
     include_package_data=True,
     install_requires=[
         "Jinja2==2.11.2",
-        "PyYAML==5.3.1",
+        "PyYAML==5.4",
         "coloredlogs==14.0"
     ],
     entry_points={
