@@ -41,9 +41,9 @@ jobs:
     - name: Check with bandit
       run: |
         bandit -r swagger2locustio
-    # - name: Test with pytest
-    #   run: |
-    #     pytest swagger2locustio/tests
+    - name: Test with pytest
+      run: |
+        pytest swagger2locustio/tests
     - name: Check test coverage
       run: |
         pytest --cov=swagger2locustio --cov-fail-under=75 swagger2locustio/tests
