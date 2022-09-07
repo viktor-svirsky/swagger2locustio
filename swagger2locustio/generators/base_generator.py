@@ -105,7 +105,9 @@ class BaseGenerator:
             file_name = f"{test_class.file_name}.py"
             class_constants = list(sorted(set(class_constants)))
             constants_str = ", ".join([constant.name for constant in class_constants])
-            import_path = str(self.tests_path / test_class.file_path / test_class.file_name).replace("/", ".")
+            import_path = (
+                str(self.tests_path / test_class.file_path / test_class.file_name).replace("/", ".").replace("\\", ".")
+            )
             test_classes_imports.append(f"from {import_path} import {test_class.class_name}")
             test_classes_inheritance.append(test_class.class_name)
             (class_file_path / file_name).write_text(
@@ -122,7 +124,9 @@ class BaseGenerator:
                     constants_templates.CONSTANTS_FILE.render(constants=class_constants)
                 )
         (self.results_path / "locustfile.py").write_text(
-            l_templates.MAIN_LOCUSTFILE.render(host=swagger_data["host"], app_name=self.app_name,)
+            l_templates.MAIN_LOCUSTFILE.render(
+                host=swagger_data["schemes"][0] + "://" + swagger_data["host"], app_name=self.app_name,
+            )
         )
         (self.results_path / self.current_app_path / "generated_taskset.py").write_text(
             l_templates.GENERATED_TASKSET_FILE.render(
