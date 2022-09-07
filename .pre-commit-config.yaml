@@ -41,10 +41,10 @@ repos:
       #   types: [python]
       #   pass_filenames: false
 
-      - id: pytest-cov
-        name: pytest
-        stages: [push]
-        language: system
-        entry: pytest --cov=swagger2locustio --cov-fail-under=0 swagger2locustio/tests
-        types: [python]
-        pass_filenames: false
+      # - id: pytest-cov
+      #   name: pytest
+      #   stages: [push]
+      #   language: system
+      #   entry: pytest --cov=swagger2locustio --cov-fail-under=75 swagger2locustio/tests
+      #   types: [python]
+      #   pass_filenames: false
