@@ -14,6 +14,7 @@ class SwaggerBaseParser(ABC):
             "host": self.parse_host_data(file_content),
             "security": self.parse_security_data(file_content),
             "paths": self.parse_paths_data(file_content, mask),
+            "definitions":self.parse_deifinitions_data(file_content)
         }
         return data
 
@@ -33,6 +34,8 @@ class SwaggerBaseParser(ABC):
             security_type = security_config.get("type", "")
             security[security_type] = security_config
         return security
+    def parse_deifinitions_data(self,file_content: dict):
+        return file_content.get("definitions")
 
     def parse_paths_data(self, file_content: dict, mask: Dict[str, Set[str]]) -> dict:
         """Method: parse paths data"""
