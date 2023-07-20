@@ -10,7 +10,7 @@ README = (HERE / "README.md").read_text()
 # This call to setup() does all the work
 setup(
     name="swagger2locustio",
-    version="0.0.4",
+    version="0.1.1",
     python_requires=">=3.7",
     description="Tool for testing API endpoints that have Open API / Swagger specifications using locustio",
     long_description=README,
@@ -19,7 +19,7 @@ setup(
     author="",
     author_email="",
     license="MIT",
-    keywords="",
+    keywords="Swagger locust api-bechtest",
     classifiers=[
         "Development Status :: 3 - Alpha",
         "Programming Language :: Python :: 3.7",
@@ -31,7 +31,7 @@ setup(
     zip_safe=False,
     include_package_data=True,
     install_requires=[
-        "Jinja2==2.11.2",
+        "Jinja2==3.1.2",
         "PyYAML==5.3.1",
         "coloredlogs==14.0"
     ],

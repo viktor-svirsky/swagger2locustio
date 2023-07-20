@@ -72,6 +72,7 @@ TEST_CLASS_FILE = Template(
 
 from apps.base import TaskSet
 from apps.helper import Helper
+from locust.clients import ResponseContextManager
 {% if constants %}from apps.{{ app_name }}.constants.{{ file_name }} import {{ constants }}{% endif %}
 
 
@@ -85,13 +86,23 @@ FUNC = Template(
     """
     @task(1)
     def {{ func_name }}(self):
-        self.client.{{ method }}(
+        response: ResponseContextManager
+        requestBody: dict
+        requestBody = {{ body_params }}
+        with self.client.{{ method }}(
             name=self.get_generic_name(__file__),
             url=self.url("{{ path }}"{{ path_params }}),
             params={{ query_params }},
             headers={{ header_params }},
             cookies={{ cookie_params }},
-        )
+            catch_response=True,
+            json= requestBody
+        ) as response:
+            if response.status_code != 200:
+                response.failure("接口异常")
+            res:dict
+            res = response.json()
+
 
 """
 )

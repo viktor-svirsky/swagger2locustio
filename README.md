@@ -37,7 +37,7 @@ swagger2locustio - a tool for testing API endpoints that have Open API / Swagger
 
 It generates `locustfile.py` from the application schema.
 
-## Supported specification versions:
+## Supported specification versions
 
 - Swagger 2.x
 
@@ -49,12 +49,12 @@ To install swagger2locustio via ``pip`` run the following command:
 pip install swagger2locustio
 ```
 
-
 ## Usage
 
 #### Command line options
 
 ```
+now version : 0.1.0
 usage: swagger2locustio [-h] -f SWAGGER_FILE [-r RESULTS_PATH] [-v]
                         [-o {get,post,put,patch,delete,head,options,trace} [{get,post,put,patch,delete,head,options,trace} ...]]
                         [--paths-white PATHS_WHITE [PATHS_WHITE ...]] [--paths-black PATHS_BLACK [PATHS_BLACK ...]] [--tags-white TAGS_WHITE [TAGS_WHITE ...]]
@@ -77,6 +77,8 @@ optional arguments:
                         tags to use in api testing (default: [])
   --tags-black TAGS_BLACK [TAGS_BLACK ...], --tb TAGS_BLACK [TAGS_BLACK ...]
                         tags to use in api testing (default: [])
+examples:
+   swagger2locustio -o {get,post} -f oil_detail.json -r ./ -v                        
 ```
 
 ## Contributing
