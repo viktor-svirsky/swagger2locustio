@@ -20,6 +20,8 @@ import string
 class Helper:
     @staticmethod
     def get_random_choice_from_values(*args):
+        if not args:
+            return ''
         return random.choice(args)
 
     @staticmethod

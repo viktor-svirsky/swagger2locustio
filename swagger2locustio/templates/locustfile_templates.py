@@ -3,12 +3,12 @@
 from jinja2 import Template
 
 MAIN_LOCUSTFILE = Template(
-    """from locust import HttpLocust
+    """from locust import HttpUser
 
 from apps.{{ app_name }}.generated_taskset import GeneratedTaskSet
 
 
-class TestUser(HttpLocust):
+class TestUser(HttpUser):
     task_set = GeneratedTaskSet
     min_wait = 5 * 1000
     max_wait = 10 * 1000
