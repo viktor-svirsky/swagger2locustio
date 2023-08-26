@@ -33,7 +33,8 @@ setup(
     install_requires=[
         "Jinja2==2.11.2",
         "PyYAML==5.3.1",
-        "coloredlogs==14.0"
+        "coloredlogs==14.0",
+        "markupsafe==2.0.1"
     ],
     entry_points={
         "console_scripts": [
